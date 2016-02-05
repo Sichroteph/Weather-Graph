@@ -59,28 +59,6 @@
 </div>
 
         
-<div class='item-container'>
-  <div class='item-container-header'>Others</div>
-  <div class='item-container-content'>
-  <div style="display:none;">
-    <label class='item'>
-      Hourly vibrations
-      <input type='checkbox' class='item-toggle' input id='toggle_vibration'>
-    </label>
-    <div class='item-container-footer'>
-      Starts at 10am - Ends at 10pm
-    </div>
-    </div>
-    <label class='item'>
-      White icons
-      <input type='checkbox' class='item-toggle'  input id='toggle_bw_icons'>
-    </label>
-        <div class='item-container-footer'>
-    Only applies to Pebble Time.
-  </div>
-  </div>    
-  </div>
-</div>  
 
 <div style="display:none;">
 <div class='item-container'>
@@ -97,42 +75,6 @@
   </div>
 </div>
 </div>
-
-    <div style="display:none;">
-<div class='colors'>
-  <div class='item-container-header'>Colors</div>
-  <div class='item-container-content'>
-     <div style="display:none;">
-     <label class='item'>
-      Hours backgroud color
-      <input type='text' class='item-color item-color-normal' input id='color_right_back' value='0x000000' display='none'>
-    </label>
-    </div>
-    <label class='item'>
-      Background color
-      <input type='text' class='item-color item-color-sunny' input id='color_left_back' value='0x000000'>
-    </label>
-
-    <div style="display:none;">
-      <label class='item'>
-      Hours color
-      <input type='text' class='item-color item-color-sunny' input id='color_hours' value='0xFFFFFF'>
-    </label>
-      </div>
-  
-     <div style="display:none;">
-    <label class='item'>
-      Ruler color
-      <input type='text' class='item-color item-color-sunny' input id='color_ruler' value='0xFFFFFF'>
-    </label>
-      </div>
-    <label class='item'>
-      Temperatures color
-      <input type='text' class='item-color item-color-sunny' input id='color_temperatures' value='0xFFFFFF'>
-    </label>
-  </div>
-</div>
-  </div>
 
 
     <div class='item-container'>
@@ -152,14 +94,7 @@
     var radio_units = document.getElementById('radio_units');
     var radio_refresh = document.getElementById('radio_refresh');
 
-    var toggle_vibration = document.getElementById('toggle_vibration');
-    var toggle_bw_icons = document.getElementById('toggle_bw_icons');
 
-    var color_right_back = document.getElementById('color_right_back');
-    var color_left_back = document.getElementById('color_left_back');
-    var color_hours = document.getElementById('color_hours');
-    var color_ruler = document.getElementById('color_ruler');
-    var color_temperatures = document.getElementById('color_temperatures');
 
 
 
@@ -169,14 +104,7 @@
 
       'radio_units': radio_units.checked,
       'radio_refresh': radio_refresh.checked,
-      'toggle_vibration': toggle_vibration.checked,
-      'toggle_bw_icons': toggle_bw_icons.checked,
 
-       'color_right_back': color_right_back.value,
-       'color_left_back': color_left_back.value,
-       'color_hours': color_hours.value,
-       'color_ruler': color_ruler.value,
-       'color_temperatures': color_temperatures.value,
 
     };
 
@@ -186,14 +114,7 @@
  
     localStorage['radio_units'] = options['radio_units'];
     localStorage['radio_refresh'] = options['radio_refresh'];
-    localStorage['toggle_vibration'] = options['toggle_vibration'];
-    localStorage['toggle_bw_icons'] = options['toggle_bw_icons'];
-    
-    localStorage['color_right_back'] = options['color_right_back'];
-    localStorage['color_left_back'] = options['color_left_back'];
-    localStorage['color_hours'] = options['color_hours'];
-    localStorage['color_ruler'] = options['color_ruler'];
-    localStorage['color_temperatures'] = options['color_temperatures'];
+
 
 
 
@@ -228,27 +149,14 @@
   
     var radio_units = document.getElementById('radio_units');
     var radio_refresh = document.getElementById('radio_refresh');
-    var toggle_vibration = document.getElementById('toggle_vibration');
-    var toggle_bw_icons = document.getElementById('toggle_bw_icons');
-    var color_right_back = document.getElementById('color_right_back');
-    var color_left_back = document.getElementById('color_left_back');
-    var color_hours = document.getElementById('color_hours');
-    var color_ruler = document.getElementById('color_ruler');
-    var color_temperatures = document.getElementById('color_temperatures');
+
 
     gps.checked = JSON.parse(localStorage['gps']);
     input_city.value =  localStorage['input_city'];
 
     radio_units.checked =  JSON.parse(localStorage['radio_units']);
     radio_refresh.checked =  JSON.parse(localStorage['radio_refresh']);
-    toggle_vibration.checked =  JSON.parse(localStorage['toggle_vibration']);
-    toggle_bw_icons.checked =  JSON.parse(localStorage['toggle_bw_icons']);
-    
-    color_right_back.value =  localStorage['color_right_back'];
-    color_left_back.value =  localStorage['color_left_back'];
-    color_hours.value =  localStorage['color_hours'];
-    color_ruler.value =  localStorage['color_ruler'];
-    color_temperatures.value =  localStorage['color_temperatures'];
+
 
   })();
   </script>
