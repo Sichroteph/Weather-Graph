@@ -40,39 +40,6 @@
           </div>
         </label>
 
-
-     <label class='item'>
-      UTC time offset
-      <select input id='select_utc' dir='rtl' class='item-select'>
-            <option class='item-select-option'>-9</option>
-            <option class='item-select-option'>-8</option>            
-            <option class='item-select-option'>-7</option>
-            <option class='item-select-option'>-6</option>
-            <option class='item-select-option'>-5</option>
-            <option class='item-select-option'>-4</option>
-            <option class='item-select-option'>-3</option>            
-            <option class='item-select-option'>-2</option>            
-            <option class='item-select-option'>-1</option>
-            <option class='item-select-option'>-0</option>            
-            <option class='item-select-option' selected>1</option>
-            <option class='item-select-option'>2</option>         
-            <option class='item-select-option'>3</option>
-            <option class='item-select-option'>4</option>
-            <option class='item-select-option'>5</option>
-            <option class='item-select-option'>6</option>
-            <option class='item-select-option'>7</option>            
-            <option class='item-select-option'>8</option>
-            <option class='item-select-option'>9</option>            
-            <option class='item-select-option'>10</option>            
-            <option class='item-select-option'>11</option>
-            <option class='item-select-option'>12</option>
-      </select>
-    </label>
-
-    <div class='item-container-footer'>
-    You can find this number by visiting <a href='http://www.timeanddate.com/time/map/'>this site</a>
-  </div>
-
     </div>
 </div>
 
@@ -181,7 +148,7 @@
   function getConfigData() {
     var gps = document.getElementById('gps');
     var input_city = document.getElementById('input_city');
-    var select_utc = document.getElementById('select_utc');
+
     var radio_units = document.getElementById('radio_units');
     var radio_refresh = document.getElementById('radio_refresh');
 
@@ -199,7 +166,7 @@
     var options = {
       'gps': gps.checked,
       'input_city': input_city.value,
-      'select_utc': select_utc.value,
+
       'radio_units': radio_units.checked,
       'radio_refresh': radio_refresh.checked,
       'toggle_vibration': toggle_vibration.checked,
@@ -216,7 +183,7 @@
     // Save for next launch
     localStorage['gps'] = options['gps'];
     localStorage['input_city'] = options['input_city'];
-    localStorage['select_utc'] = options['select_utc'];
+ 
     localStorage['radio_units'] = options['radio_units'];
     localStorage['radio_refresh'] = options['radio_refresh'];
     localStorage['toggle_vibration'] = options['toggle_vibration'];
@@ -258,7 +225,7 @@
   (function() {
     var gps = document.getElementById('gps');
     var input_city = document.getElementById('input_city');
-    var select_utc = document.getElementById('select_utc');
+  
     var radio_units = document.getElementById('radio_units');
     var radio_refresh = document.getElementById('radio_refresh');
     var toggle_vibration = document.getElementById('toggle_vibration');
@@ -271,7 +238,7 @@
 
     gps.checked = JSON.parse(localStorage['gps']);
     input_city.value =  localStorage['input_city'];
-    select_utc.value =  JSON.parse(localStorage['select_utc']);
+
     radio_units.checked =  JSON.parse(localStorage['radio_units']);
     radio_refresh.checked =  JSON.parse(localStorage['radio_refresh']);
     toggle_vibration.checked =  JSON.parse(localStorage['toggle_vibration']);
