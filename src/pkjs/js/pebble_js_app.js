@@ -1,4 +1,4 @@
-var myGoogleAPIKey = 'AIzaSyCUb2MViPLL9TPJA1z5hpXwV6MGnHQ3YbI';
+var myGoogleAPIKey = '';
 var status = ' ' ;
 
 
@@ -199,25 +199,9 @@ function getForecast() {
 
   var random = Math.floor((Math.random() * 5) + 1);
 
-  switch(random) {
-    case 1:
-      api_key= '10041d5ef72df2fd29a338c135418369';
-      break;
-    case 2:
-      api_key= '6e032f57d0fe2f5f61607f907438c754';
-      break;
-    case 3:
-      api_key= '82610c00561877e2e38260bcb71ee90e';
-      break;
-    case 4:
-      api_key= '0cb772d4de223fa0348fcb52ca8eb7d9';
-      break;
-    case 5:
-      api_key= '090da227dde3206f51862ca38d0e93a3';
-      break;
-    default:
-      api_key= '090da227dde3206f51862ca38d0e93a3';
-  }
+
+  api_key= '';
+  
 
 
   var url = 'https://api.forecast.io/forecast/'+api_key+'/'+coordinates+'?units='+units_s; 
