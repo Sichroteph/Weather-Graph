@@ -1,6 +1,5 @@
-var myGoogleAPIKey = '';
+var myGoogleAPIKey = '123456';
 var status = ' ' ;
-
 
 function SendStatus(status){
   var dictionary = {
@@ -198,15 +197,15 @@ function getForecast() {
   var api_key;
 
   var random = Math.floor((Math.random() * 5) + 1);
+  api_key= '123456';
 
 
-  api_key= '';
-  
 
 
   var url = 'https://api.forecast.io/forecast/'+api_key+'/'+coordinates+'?units='+units_s; 
+  console.log("1");
   url=url.replace(/"/g,"");
-
+  console.log("2");
 
 
   xhrRequest(url, 'GET', 
@@ -226,32 +225,32 @@ function getForecast() {
 
 
 
-               var day_int = json.daily.data[1].time;
+               var day_int = json.daily.data[0].time;
                var a = new Date(day_int*1000);
                day1 = a.getDay();        
-               day_int = json.daily.data[2].time;
+               day_int = json.daily.data[1].time;
                a = new Date(day_int*1000);
                day2 = a.getDay();
-               day_int = json.daily.data[3].time;
+               day_int = json.daily.data[2].time;
                a = new Date(day_int*1000);
                day3 = a.getDay();
-               day_int = json.daily.data[4].time;
+               day_int = json.daily.data[3].time;
                a = new Date(day_int*1000);
                day4 = a.getDay();
-               day_int = json.daily.data[5].time;
+               day_int = json.daily.data[4].time;
                a = new Date(day_int*1000);
                day5 = a.getDay();
-               day_int = json.daily.data[6].time;
+               day_int = json.daily.data[5].time;
                a = new Date(day_int*1000);
                day6 = a.getDay();
 
 
-               moonPhase1 = Math.round(json.daily.data[1].moonPhase*25);
-               moonPhase2 = Math.round(json.daily.data[2].moonPhase*25);
-               moonPhase3 = Math.round(json.daily.data[3].moonPhase*25);
-               moonPhase4 = Math.round(json.daily.data[4].moonPhase*25);
-               moonPhase5 = Math.round(json.daily.data[5].moonPhase*25);
-               moonPhase6 = Math.round(json.daily.data[6].moonPhase*25);
+               moonPhase1 = Math.round(json.daily.data[0].moonPhase*25);
+               moonPhase2 = Math.round(json.daily.data[1].moonPhase*25);
+               moonPhase3 = Math.round(json.daily.data[2].moonPhase*25);
+               moonPhase4 = Math.round(json.daily.data[3].moonPhase*25);
+               moonPhase5 = Math.round(json.daily.data[4].moonPhase*25);
+               moonPhase6 = Math.round(json.daily.data[5].moonPhase*25);
 
                if (moonPhase1 < 0)
                  moonPhase1=0;
@@ -283,18 +282,18 @@ function getForecast() {
                if (moonPhase6 > 25)
                  moonPhase6=25;
 
-               var t1=Math.round(json.daily.data[1].temperatureMax);
-               var t2=Math.round(json.daily.data[2].temperatureMax);
-               var t3=Math.round(json.daily.data[3].temperatureMax);
-               var t4=Math.round(json.daily.data[4].temperatureMax);
-               var t5=Math.round(json.daily.data[5].temperatureMax);
-               var t6=Math.round(json.daily.data[6].temperatureMax);
-               var t1_min=Math.round(json.daily.data[1].temperatureMin);
-               var t2_min=Math.round(json.daily.data[2].temperatureMin);
-               var t3_min=Math.round(json.daily.data[3].temperatureMin);
-               var t4_min=Math.round(json.daily.data[4].temperatureMin);
-               var t5_min=Math.round(json.daily.data[5].temperatureMin);
-               var t6_min=Math.round(json.daily.data[6].temperatureMin);
+               var t1=Math.round(json.daily.data[0].temperatureMax);
+               var t2=Math.round(json.daily.data[1].temperatureMax);
+               var t3=Math.round(json.daily.data[2].temperatureMax);
+               var t4=Math.round(json.daily.data[3].temperatureMax);
+               var t5=Math.round(json.daily.data[4].temperatureMax);
+               var t6=Math.round(json.daily.data[5].temperatureMax);
+               var t1_min=Math.round(json.daily.data[0].temperatureMin);
+               var t2_min=Math.round(json.daily.data[1].temperatureMin);
+               var t3_min=Math.round(json.daily.data[2].temperatureMin);
+               var t4_min=Math.round(json.daily.data[3].temperatureMin);
+               var t5_min=Math.round(json.daily.data[4].temperatureMin);
+               var t6_min=Math.round(json.daily.data[5].temperatureMin);
 
                if(units==1){
                  units_t="°F";
@@ -302,12 +301,12 @@ function getForecast() {
                else{
                  units_t="°C";
                }
-               day1_temp=t1_min+units_t+"\n"+t1+units_t;
-               day2_temp=t2_min+units_t+"\n"+t2+units_t;
-               day3_temp=t3_min+units_t+"\n"+t3+units_t;
-               day4_temp=t4_min+units_t+"\n"+t4+units_t;
-               day5_temp=t5_min+units_t+"\n"+t5+units_t;
-               day6_temp=t6_min+units_t+"\n"+t6+units_t;
+               day1_temp=t1+units_t+"\n"+t1_min+units_t;
+               day2_temp=t2+units_t+"\n"+t2_min+units_t;
+               day3_temp=t3+units_t+"\n"+t3_min+units_t;
+               day4_temp=t4+units_t+"\n"+t4_min+units_t;
+               day5_temp=t5+units_t+"\n"+t5_min+units_t;
+               day6_temp=t6+units_t+"\n"+t6_min+units_t;
                if(units==1){
                  units_s="in./hr. ";
                }
@@ -321,61 +320,61 @@ function getForecast() {
 
 
                if(units==1){
-                 day1r=Math.round(json.daily.data[1].precipIntensityMax*6*25.4);
-                 day1p=Math.round(json.daily.data[1].precipProbability*23);
-                 day2r=Math.round(json.daily.data[2].precipIntensityMax*6*25.4);
-                 day2p=Math.round(json.daily.data[2].precipProbability*23);
-                 day3r=Math.round(json.daily.data[3].precipIntensityMax*6*25.4);
-                 day3p=Math.round(json.daily.data[3].precipProbability*23);
-                 day4r=Math.round(json.daily.data[4].precipIntensityMax*6*25.4);
-                 day4p=Math.round(json.daily.data[4].precipProbability*23);
-                 day5r=Math.round(json.daily.data[5].precipIntensityMax*6*25.4);
-                 day5p=Math.round(json.daily.data[5].precipProbability*23);
-                 day6r=Math.round(json.daily.data[6].precipIntensityMax*6*25.4);
-                 day6p=Math.round(json.daily.data[6].precipProbability*23);
+                 day1r=Math.round(json.daily.data[0].precipIntensityMax*6*25.4);
+                 day1p=Math.round(json.daily.data[0].precipProbability*23);
+                 day2r=Math.round(json.daily.data[1].precipIntensityMax*6*25.4);
+                 day2p=Math.round(json.daily.data[1].precipProbability*23);
+                 day3r=Math.round(json.daily.data[2].precipIntensityMax*6*25.4);
+                 day3p=Math.round(json.daily.data[2].precipProbability*23);
+                 day4r=Math.round(json.daily.data[3].precipIntensityMax*6*25.4);
+                 day4p=Math.round(json.daily.data[3].precipProbability*23);
+                 day5r=Math.round(json.daily.data[4].precipIntensityMax*6*25.4);
+                 day5p=Math.round(json.daily.data[4].precipProbability*23);
+                 day6r=Math.round(json.daily.data[5].precipIntensityMax*6*25.4);
+                 day6p=Math.round(json.daily.data[5].precipProbability*23);
                }
                else{
-                 day1r=Math.round(json.daily.data[1].precipIntensityMax*6);
-                 day1p=Math.round(json.daily.data[1].precipProbability*23);
-                 day2r=Math.round(json.daily.data[2].precipIntensityMax*6);
-                 day2p=Math.round(json.daily.data[2].precipProbability*23);
-                 day3r=Math.round(json.daily.data[3].precipIntensityMax*6);
-                 day3p=Math.round(json.daily.data[3].precipProbability*23);
-                 day4r=Math.round(json.daily.data[4].precipIntensityMax*6);
-                 day4p=Math.round(json.daily.data[4].precipProbability*23);
-                 day5r=Math.round(json.daily.data[5].precipIntensityMax*6);
-                 day5p=Math.round(json.daily.data[5].precipProbability*23);
-                 day6r=Math.round(json.daily.data[6].precipIntensityMax*6);
-                 day6p=Math.round(json.daily.data[6].precipProbability*23);
+                 day1r=Math.round(json.daily.data[0].precipIntensityMax*6);
+                 day1p=Math.round(json.daily.data[0].precipProbability*23);
+                 day2r=Math.round(json.daily.data[1].precipIntensityMax*6);
+                 day2p=Math.round(json.daily.data[1].precipProbability*23);
+                 day3r=Math.round(json.daily.data[2].precipIntensityMax*6);
+                 day3p=Math.round(json.daily.data[2].precipProbability*23);
+                 day4r=Math.round(json.daily.data[3].precipIntensityMax*6);
+                 day4p=Math.round(json.daily.data[3].precipProbability*23);
+                 day5r=Math.round(json.daily.data[4].precipIntensityMax*6);
+                 day5p=Math.round(json.daily.data[4].precipProbability*23);
+                 day6r=Math.round(json.daily.data[5].precipIntensityMax*6);
+                 day6p=Math.round(json.daily.data[5].precipProbability*23);
                }
                if(!(day1r>-1000)){
                  if(units==1){
-                   day1r=Math.round(json.daily.data[1].precipIntensity*6*25.4);
-                   day1p=Math.round(json.daily.data[1].precipProbability*23);
-                   day2r=Math.round(json.daily.data[2].precipIntensity*6*25.4);
-                   day2p=Math.round(json.daily.data[2].precipProbability*23);
-                   day3r=Math.round(json.daily.data[3].precipIntensity*6*25.4);
-                   day3p=Math.round(json.daily.data[3].precipProbability*23);
-                   day4r=Math.round(json.daily.data[4].precipIntensity*6*25.4);
-                   day4p=Math.round(json.daily.data[4].precipProbability*23);
-                   day5r=Math.round(json.daily.data[5].precipIntensity*6*25.4);
-                   day5p=Math.round(json.daily.data[5].precipProbability*23);
-                   day6r=Math.round(json.daily.data[6].precipIntensity*6*25.4);
-                   day6p=Math.round(json.daily.data[6].precipProbability*23);
+                   day1r=Math.round(json.daily.data[0].precipIntensity*6*25.4);
+                   day1p=Math.round(json.daily.data[0].precipProbability*23);
+                   day2r=Math.round(json.daily.data[1].precipIntensity*6*25.4);
+                   day2p=Math.round(json.daily.data[1].precipProbability*23);
+                   day3r=Math.round(json.daily.data[2].precipIntensity*6*25.4);
+                   day3p=Math.round(json.daily.data[2].precipProbability*23);
+                   day4r=Math.round(json.daily.data[3].precipIntensity*6*25.4);
+                   day4p=Math.round(json.daily.data[3].precipProbability*23);
+                   day5r=Math.round(json.daily.data[4].precipIntensity*6*25.4);
+                   day5p=Math.round(json.daily.data[4].precipProbability*23);
+                   day6r=Math.round(json.daily.data[5].precipIntensity*6*25.4);
+                   day6p=Math.round(json.daily.data[5].precipProbability*23);
                  }
                  else{
-                   day1r=Math.round(json.daily.data[1].precipIntensity*6);
-                   day1p=Math.round(json.daily.data[1].precipProbability*23);
-                   day2r=Math.round(json.daily.data[2].precipIntensity*6);
-                   day2p=Math.round(json.daily.data[2].precipProbability*23);
-                   day3r=Math.round(json.daily.data[3].precipIntensity*6);
-                   day3p=Math.round(json.daily.data[3].precipProbability*23);
-                   day4r=Math.round(json.daily.data[4].precipIntensity*6);
-                   day4p=Math.round(json.daily.data[4].precipProbability*23);
-                   day5r=Math.round(json.daily.data[5].precipIntensity*6);
-                   day5p=Math.round(json.daily.data[5].precipProbability*23);
-                   day6r=Math.round(json.daily.data[6].precipIntensity*6);
-                   day6p=Math.round(json.daily.data[6].precipProbability*23);
+                   day1r=Math.round(json.daily.data[0].precipIntensity*6);
+                   day1p=Math.round(json.daily.data[0].precipProbability*23);
+                   day2r=Math.round(json.daily.data[1].precipIntensity*6);
+                   day2p=Math.round(json.daily.data[1].precipProbability*23);
+                   day3r=Math.round(json.daily.data[2].precipIntensity*6);
+                   day3p=Math.round(json.daily.data[2].precipProbability*23);
+                   day4r=Math.round(json.daily.data[3].precipIntensity*6);
+                   day4p=Math.round(json.daily.data[3].precipProbability*23);
+                   day5r=Math.round(json.daily.data[4].precipIntensity*6);
+                   day5p=Math.round(json.daily.data[4].precipProbability*23);
+                   day6r=Math.round(json.daily.data[5].precipIntensity*6);
+                   day6p=Math.round(json.daily.data[5].precipProbability*23);
                  }
 
                }
@@ -403,12 +402,12 @@ function getForecast() {
                console.log("json.daily.data[1].precipIntensity " +json.daily.data[1].precipIntensity);
                console.log("day1p " +day1p);
 
-               day1_icon=json.daily.data[1].icon;
-               day2_icon=json.daily.data[2].icon;
-               day3_icon=json.daily.data[3].icon;
-               day4_icon=json.daily.data[4].icon;
-               day5_icon=json.daily.data[5].icon;
-               day6_icon=json.daily.data[6].icon;
+               day1_icon=json.daily.data[0].icon;
+               day2_icon=json.daily.data[1].icon;
+               day3_icon=json.daily.data[2].icon;
+               day4_icon=json.daily.data[3].icon;
+               day5_icon=json.daily.data[4].icon;
+               day6_icon=json.daily.data[5].icon;
 
                console.log("day1_icon" +day1_icon);
 
