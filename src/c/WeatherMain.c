@@ -371,9 +371,9 @@ static char *weekdayLangEs[7]={"DOMINGO","LUNES","MARTES","MIERCOLES","JUEVES","
 
 
 static int build_icon (char *text_icon){
-  //APP_LOG(APP_LOG_LEVEL_INFO, "texte ICONE  %s", text_icon);
+  APP_LOG(APP_LOG_LEVEL_INFO, "texte ICONE  %s", text_icon);
 
-  if (strcmp (text_icon,"clear")==0){
+  if ((strcmp (text_icon,"clear")==0)||(strcmp (text_icon,"clear-day")==0)){
     if((is_bw_icon)||(!IS_COLOR))
       return RESOURCE_ID_ENSOLEILLE_W;
     else
@@ -643,11 +643,7 @@ static void layer_update(Layer *me, GContext* ctx) {
 
 
 
-    // draw temperatures
-
-
-
-
+    // draw temperature
   }
 
   else{
@@ -709,8 +705,6 @@ static void layer_update(Layer *me, GContext* ctx) {
 
 
       //   APP_LOG(APP_LOG_LEVEL_INFO, "location page1 %s", location);
-
-
       // draw icon
       int icon_id;
       icon_id = build_icon(icon);
@@ -772,16 +766,16 @@ static void layer_update(Layer *me, GContext* ctx) {
     }
 
 
-    else if((page_nb==2)||(page_nb==3)){
+    else if((page_nb==4)||(page_nb==5)){
       int index;
 
       // Pour sauter de 2 en 2 les valeurs à chaque page
-      if(page_nb==2){
-        index=0;
+      if(page_nb==4){
+        index=-2;
       }
 
-      else if(page_nb==3){
-        index=2;
+      else if(page_nb==5){
+        index=0;
       }
       else{
         index=0;
@@ -1074,7 +1068,7 @@ static void layer_update(Layer *me, GContext* ctx) {
 
     }
 
-    else if(page_nb==4){
+    else if(page_nb==2){
 
       #if defined(PBL_ROUND)
 
@@ -1184,7 +1178,7 @@ static void layer_update(Layer *me, GContext* ctx) {
 
     }
 
-    else if(page_nb==5){
+    else if(page_nb==3){
 
       #if defined(PBL_ROUND)
       GRect rect_day1= {{0, -5 }, {WIDTH , 36 } };
