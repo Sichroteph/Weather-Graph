@@ -148,6 +148,12 @@
         "resources": {
             "media": [
                 {
+                    "file": "images/BACK_SELECTION_SQUARE",
+                    "name": "BACK_SELECTION_SQUARE",
+                    "targetPlatforms": null,
+                    "type": "bitmap"
+                },
+                {
                     "file": "images/WIND_S",
                     "name": "WIND_S",
                     "targetPlatforms": null,
@@ -383,12 +389,6 @@
                     "type": "bitmap"
                 },
                 {
-                    "file": "images/BACK_SELECTION_SQUARE",
-                    "name": "BACK_SELECTION_SQUARE",
-                    "targetPlatforms": null,
-                    "type": "bitmap"
-                },
-                {
                     "file": "images/BACK_SELECTION_ROUND",
                     "name": "BACK_SELECTION_ROUND",
                     "targetPlatforms": null,
@@ -412,6 +412,12 @@
                     "name": "FONT_BOLD_MOON_25",
                     "targetPlatforms": null,
                     "type": "font"
+                },
+                {
+                    "file": "images/LOADING",
+                    "name": "LOADING",
+                    "targetPlatforms": null,
+                    "type": "bitmap"
                 }
             ]
         },
@@ -419,12 +425,13 @@
         "targetPlatforms": [
             "aplite",
             "basalt",
-            "chalk"
+            "chalk",
+            "diorite"
         ],
         "uuid": "667b72ab-1ee6-4082-a259-77786220e42d",
         "watchapp": {
             "watchface": false
         }
     },
-    "version": "1.83.0"
+    "version": "1.91.0"
 }

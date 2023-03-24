@@ -15,7 +15,6 @@
 #define WIDTH 144
 #define HEIGHT 168
 #endif
-
 #define RULER_SIZE -2
 #define MAXRAIN 40;
 
@@ -373,13 +372,13 @@ static char *weekdayLangEs[7]={"DOMINGO","LUNES","MARTES","MIERCOLES","JUEVES","
 static int build_icon (char *text_icon){
   APP_LOG(APP_LOG_LEVEL_INFO, "texte ICONE  %s", text_icon);
 
-  if ((strcmp (text_icon,"clear")==0)||(strcmp (text_icon,"clear-day")==0)){
+  if ((strcmp (text_icon,"clear")==0)||(strcmp (text_icon,"clear-day")==0)||(strcmp (text_icon,"01d")==0)){
     if((is_bw_icon)||(!IS_COLOR))
       return RESOURCE_ID_ENSOLEILLE_W;
     else
       return RESOURCE_ID_ENSOLEILLE;
   }
-  if (strcmp (text_icon,"clear-night")==0){
+  if ((strcmp (text_icon,"clear-night")==0)||(strcmp (text_icon,"01n")==0)){
     if((is_bw_icon)||(!IS_COLOR))
       return RESOURCE_ID_NUIT_CLAIRE_W;
     else
@@ -403,19 +402,19 @@ static int build_icon (char *text_icon){
     else
       return RESOURCE_ID_NUIT_BIEN_DEGAGEE;
   }
-  if (strcmp (text_icon,"partly-cloudy-day")==0){
+  if ((strcmp (text_icon,"partly-cloudy-day")==0)||(strcmp (text_icon,"03d")==0)){
     if((is_bw_icon)||(!IS_COLOR))
       return RESOURCE_ID_DEVELOPPEMENT_NUAGEUX_W;
     else
       return RESOURCE_ID_DEVELOPPEMENT_NUAGEUX;
   }
-  if (strcmp (text_icon,"partly-cloudy-night")==0){
+  if ((strcmp (text_icon,"partly-cloudy-night")==0)||(strcmp (text_icon,"03n")==0)){
     if((is_bw_icon)||(!IS_COLOR))
       return RESOURCE_ID_NUIT_AVEC_DEVELOPPEMENT_NUAGEUX_W;
     else
       return RESOURCE_ID_NUIT_AVEC_DEVELOPPEMENT_NUAGEUX;
   }
-  if (strcmp (text_icon,"cloudy")==0){
+  if ((strcmp (text_icon,"cloudy")==0)||(strcmp (text_icon,"04d")==0)){
     if((is_bw_icon)||(!IS_COLOR))
       return RESOURCE_ID_FORTEMENT_NUAGEUX_W;
     else
@@ -433,7 +432,7 @@ static int build_icon (char *text_icon){
     else
       return RESOURCE_ID_COUVERT_AVEC_AVERSES;
   }
-  if (strcmp (text_icon,"rain")==0){
+  if ((strcmp (text_icon,"rain")==0)||(strcmp (text_icon,"10d")==0)){
     if((is_bw_icon)||(!IS_COLOR))
       return RESOURCE_ID_AVERSES_DE_PLUIE_FORTE_W;
     else
@@ -446,19 +445,19 @@ static int build_icon (char *text_icon){
       return RESOURCE_ID_NUIT_AVEC_AVERSES;
   }
 
-  if (strcmp (text_icon,"thunderstorm")==0||strcmp (text_icon,"tornado")==0){
+  if (strcmp (text_icon,"thunderstorm")==0||strcmp (text_icon,"tornado")==0||(strcmp (text_icon,"11d")==0)||(strcmp (text_icon,"11n")==0)){
     if((is_bw_icon)||(!IS_COLOR))
       return RESOURCE_ID_FORTEMENT_ORAGEUX_W;
     else
       return RESOURCE_ID_FORTEMENT_ORAGEUX;
   }
-  if (strcmp (text_icon,"snow")==0||strcmp (text_icon,"sleet")==0){
+  if (strcmp (text_icon,"snow")==0||strcmp (text_icon,"sleet")==0||(strcmp (text_icon,"13d")==0)||(strcmp (text_icon,"13n")==0)){
     if((is_bw_icon)||(!IS_COLOR))
       return RESOURCE_ID_NEIGE_FORTE_W;
     else
       return RESOURCE_ID_NEIGE_FORTE;
   }
-  if (strcmp (text_icon,"fog")==0||strcmp (text_icon,"hail")==0){
+  if (strcmp (text_icon,"fog")==0||strcmp (text_icon,"hail")==0||(strcmp (text_icon,"50d")==0)||(strcmp (text_icon,"50n")==0)){
     if((is_bw_icon)||(!IS_COLOR))
       return RESOURCE_ID_BROUILLARD_W;
     else
@@ -841,7 +840,7 @@ static void layer_update(Layer *me, GContext* ctx) {
 
       int hour_style;
 
-      if(page_nb==2){
+      if(page_nb==4){
         i_h0 = h0;
         i_h1 = h1;
         i_h2 = h2;
@@ -850,7 +849,7 @@ static void layer_update(Layer *me, GContext* ctx) {
 
       }
 
-      else if(page_nb==3){
+      else if(page_nb==5){
         i_h0 = h4;
         i_h1 = h5;
         i_h2 = h6;
@@ -1438,13 +1437,13 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
      &&rain3_tuple&&rain4_tuple&&temp6_tuple&&temp7_tuple&&temp8_tuple&&temp9_tuple&&h4_tuple&&h5_tuple&&h6_tuple
      &&h7_tuple&&rain5_tuple&&rain6_tuple&&rain7_tuple&&rain8_tuple&&icon4_tuple&&icon5_tuple&&icon6_tuple&&icon7_tuple
      &&wind4_tuple&&wind5_tuple &&wind6_tuple &&wind7_tuple&&day1_tuple&&day2_tuple&&day3_tuple&&day1_icon_tuple&&day2_icon_tuple
-     &&day3_icon_tuple){
+     &&day3_icon_tuple&&KEY_DAY1R&&KEY_DAY2R&&KEY_DAY3R&&KEY_DAY4R&&KEY_DAY5R&&KEY_DAY6R){
 
 
 
 
     graph=graph_tuple->value->int32;
-    //  APP_LOG(APP_LOG_LEVEL_DEBUG,"c++ graph %d", graph);
+    //APP_LOG(APP_LOG_LEVEL_DEBUG,"c++ graph %d", graph);
 
     snprintf(weather_temp, sizeof(weather_temp), "%s", temp_tuple->value->cstring);
 
@@ -1503,7 +1502,9 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
     snprintf(day5_temp, sizeof(day5_temp), "%s", day5_temp_tuple->value->cstring);
     snprintf(day6_temp, sizeof(day6_temp), "%s", day6_temp_tuple->value->cstring);
 
-    rains[0]=(int)rain1_tuple->value->int32;
+
+	 
+	 rains[0]=(int)rain1_tuple->value->int32;
     rains[1]=(int)rain11_tuple->value->int32;
     rains[2]=(int)rain12_tuple->value->int32;
     rains[3]=(int)rain2_tuple->value->int32;
