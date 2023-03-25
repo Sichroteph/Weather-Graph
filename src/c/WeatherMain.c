@@ -30,7 +30,7 @@
 #define BLUE_LINE GColorElectricBlue
 #define RED_LINE GColorRed
 #define RAIN_COLOR GColorCobaltBlue
-#define IS_COLOR false
+#define IS_COLOR true
 
 #else
 
@@ -352,7 +352,7 @@ static bool graph=0;
 static bool is_metric=1;
 
 static int page_nb = 1 ;
-static bool is_bw_icon=1;
+static bool is_bw_icon=0;
 
 static char pebble_Lang[20]=" ";
 
@@ -372,6 +372,7 @@ static char *weekdayLangEs[7]={"DOMINGO","LUNES","MARTES","MIERCOLES","JUEVES","
 static int build_icon (char *text_icon){
   APP_LOG(APP_LOG_LEVEL_INFO, "texte ICONE  %s", text_icon);
 
+	
   if ((strcmp (text_icon,"clear")==0)||(strcmp (text_icon,"clear-day")==0)||(strcmp (text_icon,"01d")==0)){
     if((is_bw_icon)||(!IS_COLOR))
       return RESOURCE_ID_ENSOLEILLE_W;

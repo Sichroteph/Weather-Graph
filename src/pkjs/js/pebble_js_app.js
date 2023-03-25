@@ -195,7 +195,7 @@ function getForecast() {
   else{
     units_s="metric";
   }
-  
+
   var url = 'http://api.openweathermap.org/data/2.5/onecall?'+coordinates+'&appid=' + input_api + '&units='+units_s;
 
   xhrRequest(url, 'GET',
