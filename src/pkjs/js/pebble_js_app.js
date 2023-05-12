@@ -197,7 +197,7 @@ function getForecast() {
   }
 
   var url = 'http://api.openweathermap.org/data/2.5/onecall?'+coordinates+'&appid=' + input_api + '&units='+units_s;
-
+console.log(url);
   xhrRequest(url, 'GET',
              function(responseText) {
                            
@@ -215,6 +215,8 @@ function getForecast() {
              // console.log(responseFixed);
 
                 var json = JSON.parse(responseFixed);
+
+
 
                  var day_int = json.daily[0].dt;
                  var a = new Date(day_int*1000);
@@ -316,7 +318,9 @@ function getForecast() {
 
                  if(units==1){
                    day1r=Math.round(json.daily[0].weather.rain*6*25.4);
-                   day1p=Math.round(json.daily[0].wind_speed);
+                   
+
+		day1p=Math.round(json.daily[0].wind_speed);
                    day2r=Math.round(json.daily[1].weather.rain*6*25.4);
                    day2p=Math.round(json.daily[1].wind_speed);                  
                    day3r=Math.round(json.daily[2].weather.rain*6*25.4);
@@ -325,7 +329,7 @@ function getForecast() {
                    day4p=Math.round(json.daily[3].wind_speed);
                    day5r=Math.round(json.daily[4].weather.rain*6*25.4);
                    day5p=Math.round(json.daily[4].wind_speed);                   
-                   day6r=Math.round(json.daily[5].weather.rain*6*25.4);
+		   day6r=Math.round(json.daily[5].weather.rain*6*25.4);
                    day6p=Math.round(json.daily[5].wind_speed);                  
                  }
                  else{
@@ -464,31 +468,132 @@ function getForecast() {
                  icon6 = json.hourly[18].weather[0].icon;
                  icon7 = json.hourly[21].weather[0].icon;
                
-        
-                 rain1=json.hourly[0].weather[0].rain*20;              
-                 rain11=json.hourly[1].weather[0].rain*20;
-                 rain12=json.hourly[2].weather[0].rain*20;
-                 rain2=json.hourly[3].weather[0].rain*20;
-                 rain21=json.hourly[4].weather[0].rain*20;
-                 rain22=json.hourly[5].weather[0].rain*20;
-                 rain3=json.hourly[6].weather[0].rain*20;
-                 rain31=json.hourly[7].weather[0].rain*20;
-                 rain32=json.hourly[8].weather[0].rain*20;
-                 rain4=json.hourly[9].weather[0].rain*20;
-                 rain41=json.hourly[10].weather[0].rain*20;
-                 rain42=json.hourly[11].weather[0].rain*20;
-                 rain5=json.hourly[12].weather[0].rain*20;
-                 rain51=json.hourly[13].weather[0].rain*20;
-                 rain52=json.hourly[14].weather[0].rain*20;
-                 rain6=json.hourly[15].weather[0].rain*20;
-                 rain61=json.hourly[16].weather[0].rain*20;
-                 rain62=json.hourly[17].weather[0].rain*20;
-                 rain7=json.hourly[18].weather[0].rain*20;
-                 rain71=json.hourly[19].weather[0].rain*20;
-                 rain72=json.hourly[20].weather[0].rain*20;
-                 rain8=json.hourly[21].weather[0].rain*20;
-                 rain81=json.hourly[22].weather[0].rain*20;
-                 rain82=json.hourly[23].weather[0].rain*20;
+
+// Vérifier si hourly[4].rain existe
+if ('rain' in json.hourly[0]) {
+rain1=json.hourly[0].rain["1h"]*20;  
+} else {
+rain1=0;  
+}
+
+if ('rain' in json.hourly[1]) {
+rain11=json.hourly[1].rain["1h"]*20;  
+} else {
+rain11=0;  
+}
+
+    if ('rain' in json.hourly[2]) {
+rain12=json.hourly[2].rain["1h"]*20;  
+} else {
+rain12=0;  
+}
+if ('rain' in json.hourly[3]) {
+rain2=json.hourly[3].rain["1h"]*20;  
+} else {
+rain2=0;  
+}
+if ('rain' in json.hourly[4]) {
+rain21=json.hourly[4].rain["1h"]*20;  
+} else {
+rain21=0;  
+}
+if ('rain' in json.hourly[5]) {
+rain22=json.hourly[5].rain["1h"]*20;  
+} else {
+rain22=0;  
+}
+if ('rain' in json.hourly[6]) {
+rain3=json.hourly[6].rain["1h"]*20;  
+} else {
+rain3=0;  
+}
+if ('rain' in json.hourly[7]) {
+rain31=json.hourly[7].rain["1h"]*20;  
+} else {
+rain31=0;  
+}
+if ('rain' in json.hourly[8]) {
+rain32=json.hourly[8].rain["1h"]*20;  
+} else {
+rain32=0;  
+}
+if ('rain' in json.hourly[9]) {
+rain4=json.hourly[9].rain["1h"]*20;  
+} else {
+rain4=0;  
+}
+if ('rain' in json.hourly[10]) {
+rain41=json.hourly[10].rain["1h"]*20;  
+} else {
+rain41=0;  
+}
+if ('rain' in json.hourly[11]) {
+rain42=json.hourly[11].rain["1h"]*20;  
+} else {
+rain42=0;  
+}
+if ('rain' in json.hourly[12]) {
+rain5=json.hourly[12].rain["1h"]*20;  
+} else {
+rain5=0;  
+}
+if ('rain' in json.hourly[13]) {
+rain51=json.hourly[13].rain["1h"]*20;  
+} else {
+rain51=0;  
+}
+if ('rain' in json.hourly[14]) {
+rain52=json.hourly[14].rain["1h"]*20;  
+} else {
+rain52=0;  
+}
+if ('rain' in json.hourly[15]) {
+rain6=json.hourly[15].rain["1h"]*20;  
+} else {
+rain6=0;  
+}
+if ('rain' in json.hourly[16]) {
+rain61=json.hourly[16].rain["1h"]*20;  
+} else {
+rain61=0;  
+}
+if ('rain' in json.hourly[17]) {
+rain62=json.hourly[17].rain["1h"]*20;  
+} else {
+rain62=0;  
+}
+if ('rain' in json.hourly[18]) {
+rain7=json.hourly[18].rain["1h"]*20;  
+} else {
+rain7=0;  
+}
+if ('rain' in json.hourly[19]) {
+rain71=json.hourly[19].rain["1h"]*20;  
+} else {
+rain71=0;  
+}
+if ('rain' in json.hourly[20]) {
+rain72=json.hourly[20].rain["1h"]*20;  
+} else {
+rain72=0;  
+}
+if ('rain' in json.hourly[21]) {
+rain8=json.hourly[21].rain["1h"]*20;  
+} else {
+rain8=0;  
+}
+if ('rain' in json.hourly[22]) {
+rain81=json.hourly[22].rain["1h"]*20;  
+} else {
+rain81=0;  
+}
+if ('rain' in json.hourly[23]) {
+rain82=json.hourly[23].rain["1h"]*20;  
+} else {
+rain82=0;  
+}
+                     
+
                         
                   if (isNaN(rain1)) rain1 = 0;
                   if (isNaN(rain11)) rain11 = 0;
@@ -821,7 +926,7 @@ function getPosition() {
 // Listen for when the watchface is opened
 Pebble.addEventListener('ready',
                         function(e) {
-                          console.log("PebbleKit JS ready!");
+                          console.log("PebbleKit JS ready.");
                   
                           getPosition();
 
