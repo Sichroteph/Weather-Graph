@@ -195,7 +195,7 @@ function getForecast() {
   else{
     units_s="metric";
   }
-input_api = "ae461f943802d620eafda5d9d3c98f91"
+
   var url = 'http://api.openweathermap.org/data/2.5/onecall?'+coordinates+'&appid=' + input_api + '&units='+units_s;
 console.log(url);
   xhrRequest(url, 'GET',
@@ -317,33 +317,33 @@ console.log(url);
                  //23 pixels hight
 
                  if(units==1){
-                   day1r=Math.round(json.daily[0].weather[0].rain*6*25.4);
+                   day1r=Math.round(json.daily[0].rain*6*25.4);
                    
 
 		day1p=Math.round(json.daily[0].wind_speed);
-                   day2r=Math.round(json.daily[1].weather[0].rain*6*25.4);
+                   day2r=Math.round(json.daily[1].rain*6*25.4);
                    day2p=Math.round(json.daily[1].wind_speed);                  
-                   day3r=Math.round(json.daily[2].weather[0].rain*6*25.4);
+                   day3r=Math.round(json.daily[2].rain*6*25.4);
                    day3p=Math.round(json.daily[2].wind_speed);                   
-                   day4r=Math.round(json.daily[3].weather[0].rain*6*25.4);
+                   day4r=Math.round(json.daily[3].rain*6*25.4);
                    day4p=Math.round(json.daily[3].wind_speed);
-                   day5r=Math.round(json.daily[4].weather[0].rain*6*25.4);
+                   day5r=Math.round(json.daily[4].rain*6*25.4);
                    day5p=Math.round(json.daily[4].wind_speed);                   
-		   day6r=Math.round(json.daily[5].weather[0].rain*6*25.4);
+		   day6r=Math.round(json.daily[5].rain*6*25.4);
                    day6p=Math.round(json.daily[5].wind_speed);                  
                  }
                  else{
-                   day1r=Math.round(json.daily[0].weather[0].rain*6);
+                   day1r=Math.round(json.daily[0].rain*6);
                    day1p=Math.round(json.daily[0].wind_speed);
-                   day2r=Math.round(json.daily[1].weather[0].rain*6)
+                   day2r=Math.round(json.daily[1].rain*6)
                    day2p=Math.round(json.daily[1].wind_speed);                  
-                   day3r=Math.round(json.daily[2].weather[0].rain*6);
+                   day3r=Math.round(json.daily[2].rain*6);
                    day3p=Math.round(json.daily[2].wind_speed);                  
-                   day4r=Math.round(json.daily[3].weather[0].rain*6);
+                   day4r=Math.round(json.daily[3].rain*6);
                   day4p=Math.round(json.daily[3].wind_speed);                   
-                   day5r=Math.round(json.daily[4].weather[0].rain*6);
+                   day5r=Math.round(json.daily[4].rain*6);
                    day5p=Math.round(json.daily[4].wind_speed);                  
-                   day6r=Math.round(json.daily[5].weather[0].rain*6);
+                   day6r=Math.round(json.daily[5].rain*6);
                   day6p=Math.round(json.daily[5].wind_speed); 
                  }
                   if (isNaN(day1r)) day1r = 0;
