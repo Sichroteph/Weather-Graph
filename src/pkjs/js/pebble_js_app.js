@@ -196,7 +196,7 @@ function getForecast() {
     units_s="metric";
   }
 
-  var url = 'http://api.openweathermap.org/data/2.5/onecall?'+coordinates+'&appid=' + input_api + '&units='+units_s;
+var url = 'http://api.openweathermap.org/data/2.5/onecall?'+coordinates+'&appid=' + input_api + '&units='+units_s;
 console.log(url);
   xhrRequest(url, 'GET',
              function(responseText) {
@@ -898,6 +898,7 @@ function locationSuccess(pos) {
   //console.log('input_api : '+input_api);
   
 
+
   
    getForecast();
 
@@ -978,6 +979,8 @@ Pebble.addEventListener('webviewclosed', function(e) {
   var radio_units = configData.radio_units;
   var input_city = configData.input_city;
   var input_api = configData.input_api;
+
+console.log('input_api received : ' + input_api);
 
 
   localStorage.setItem(150, gps ? 1 : 0);
