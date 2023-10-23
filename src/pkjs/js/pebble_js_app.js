@@ -319,31 +319,31 @@ console.log(url);
                  if(units==1){
                    day1r=Math.round(json.daily[0].rain*6*25.4);
                    
-
+// 23 pixels, 15mm max
 		day1p=Math.round(json.daily[0].wind_speed);
-                   day2r=Math.round(json.daily[1].rain*6*25.4);
+                   day2r=Math.round(json.daily[1].rain*25.4*23/15);
                    day2p=Math.round(json.daily[1].wind_speed);                  
-                   day3r=Math.round(json.daily[2].rain*6*25.4);
+                   day3r=Math.round(json.daily[2].rain*25.4*23/15);
                    day3p=Math.round(json.daily[2].wind_speed);                   
-                   day4r=Math.round(json.daily[3].rain*6*25.4);
+                   day4r=Math.round(json.daily[3].rain*25.4*23/15);
                    day4p=Math.round(json.daily[3].wind_speed);
-                   day5r=Math.round(json.daily[4].rain*6*25.4);
+                   day5r=Math.round(json.daily[4].rain*25.4*23/15);
                    day5p=Math.round(json.daily[4].wind_speed);                   
-		   day6r=Math.round(json.daily[5].rain*6*25.4);
+		   day6r=Math.round(json.daily[5].rain*25.4*23/15);
                    day6p=Math.round(json.daily[5].wind_speed);                  
                  }
                  else{
-                   day1r=Math.round(json.daily[0].rain*6);
+                   day1r=Math.round(json.daily[0].rain*23/15);
                    day1p=Math.round(json.daily[0].wind_speed);
-                   day2r=Math.round(json.daily[1].rain*6)
+                   day2r=Math.round(json.daily[1].rain*23/15)
                    day2p=Math.round(json.daily[1].wind_speed);                  
-                   day3r=Math.round(json.daily[2].rain*6);
+                   day3r=Math.round(json.daily[2].rain*23/15);
                    day3p=Math.round(json.daily[2].wind_speed);                  
-                   day4r=Math.round(json.daily[3].rain*6);
+                   day4r=Math.round(json.daily[3].rain*23/15);
                   day4p=Math.round(json.daily[3].wind_speed);                   
-                   day5r=Math.round(json.daily[4].rain*6);
+                   day5r=Math.round(json.daily[4].rain*23/15);
                    day5p=Math.round(json.daily[4].wind_speed);                  
-                   day6r=Math.round(json.daily[5].rain*6);
+                   day6r=Math.round(json.daily[5].rain*23/15);
                   day6p=Math.round(json.daily[5].wind_speed); 
                  }
                   if (isNaN(day1r)) day1r = 0;
@@ -353,6 +353,9 @@ console.log(url);
                   if (isNaN(day5r)) day5r = 0;
                   if (isNaN(day6r)) day6r = 0;    
            
+console.log("day2r");
+		console.log(day2r);
+
                  if(day1r>23){
                    day1r=23;
                  }
