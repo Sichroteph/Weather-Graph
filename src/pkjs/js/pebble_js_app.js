@@ -1,7 +1,7 @@
 var myGoogleAPIKey = ' ';
 var status = ' ';
 var debugLog = 1;
-var testMode = 0;
+var testMode = 1;
 
 function SendStatus(status) {
   var dictionary = {
@@ -548,9 +548,10 @@ function getPosition() {
       },
       timestamp: 1692448765123        // Timestamp en millisecondes depuis l'époque Unix
     };
+    locationSuccess(position);
   }
 
-  locationSuccess(position);
+ 
 
 }
 
