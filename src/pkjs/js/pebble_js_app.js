@@ -1,7 +1,7 @@
 var myGoogleAPIKey = ' ';
 var status = ' ';
 var debugLog = 1;
-var testMode = 1;
+var testMode = 0;
 
 function SendStatus(status) {
   var dictionary = {
