@@ -363,21 +363,21 @@ static int build_icon(char *text_icon)
 {
   // APP_LOG(APP_LOG_LEVEL_INFO, "texte ICONE  %s", text_icon);
 
-  if ((strcmp(text_icon, "clear") == 0) || (strcmp(text_icon, "clear-day") == 0) || (strcmp(text_icon, "01d") == 0))
+  if ((strcmp(text_icon, "clearsky_day") == 0))
   {
     if ((is_bw_icon) || (!IS_COLOR))
       return RESOURCE_ID_ENSOLEILLE_W;
     else
       return RESOURCE_ID_ENSOLEILLE;
   }
-  if ((strcmp(text_icon, "clear-night") == 0) || (strcmp(text_icon, "01n") == 0))
+  if ((strcmp(text_icon, "clearsky_night") == 0) || (strcmp(text_icon, "01n") == 0))
   {
     if ((is_bw_icon) || (!IS_COLOR))
       return RESOURCE_ID_NUIT_CLAIRE_W;
     else
       return RESOURCE_ID_NUIT_CLAIRE;
   }
-  if (strcmp(text_icon, "02d") == 0)
+  if ((strcmp(text_icon, "fair_day") == 0) || (strcmp(text_icon, "fair_polartwilight") == 0))
   {
     if ((is_bw_icon) || (!IS_COLOR))
       return RESOURCE_ID_FAIBLES_PASSAGES_NUAGEUX_W;
@@ -391,21 +391,21 @@ static int build_icon(char *text_icon)
     else
       return RESOURCE_ID_WIND;
   }
-  if (strcmp(text_icon, "02n") == 0)
+  if (strcmp(text_icon, "fair_night") == 0)
   {
     if ((is_bw_icon) || (!IS_COLOR))
       return RESOURCE_ID_NUIT_BIEN_DEGAGEE_W;
     else
       return RESOURCE_ID_NUIT_BIEN_DEGAGEE;
   }
-  if ((strcmp(text_icon, "partly-cloudy-day") == 0) || (strcmp(text_icon, "03d") == 0))
+  if ((strcmp(text_icon, "partlycloudy_day") == 0) || (strcmp(text_icon, "partlycloudy_polartwilight") == 0))
   {
     if ((is_bw_icon) || (!IS_COLOR))
       return RESOURCE_ID_DEVELOPPEMENT_NUAGEUX_W;
     else
       return RESOURCE_ID_DEVELOPPEMENT_NUAGEUX;
   }
-  if ((strcmp(text_icon, "partly-cloudy-night") == 0) || (strcmp(text_icon, "03n") == 0))
+  if ((strcmp(text_icon, "partlycloudy_night") == 0) || (strcmp(text_icon, "03n") == 0))
   {
     if ((is_bw_icon) || (!IS_COLOR))
       return RESOURCE_ID_NUIT_AVEC_DEVELOPPEMENT_NUAGEUX_W;
@@ -426,21 +426,21 @@ static int build_icon(char *text_icon)
     else
       return RESOURCE_ID_NUIT_NUAGEUSE;
   }
-  if (strcmp(text_icon, "09d") == 0 || strcmp(text_icon, "09n") == 0)
+  if (strcmp(text_icon, "lightrainshowers_day") == 0 || strcmp(text_icon, "lightrainshowers_night") == 0 || strcmp(text_icon, "lightrainshowers_polartwilight") == 0 || strcmp(text_icon, "lightsleetshowers_day") == 0 || strcmp(text_icon, "lightsleetshowers_night") == 0 || strcmp(text_icon, "lightsleetshowers_polartwilight") == 0 || strcmp(text_icon, "lightrain") == 0 || strcmp(text_icon, "lightsleet") == 0)
   {
     if ((is_bw_icon) || (!IS_COLOR))
       return RESOURCE_ID_COUVERT_AVEC_AVERSES_W;
     else
       return RESOURCE_ID_COUVERT_AVEC_AVERSES;
   }
-  if ((strcmp(text_icon, "rain") == 0) || (strcmp(text_icon, "10d") == 0))
+  if ((strcmp(text_icon, "rainshowers_day") == 0) || (strcmp(text_icon, "rainshowers_polartwilight") == 0) || (strcmp(text_icon, "heavyrain") == 0) || (strcmp(text_icon, "heavyrainshowers_day") == 0) || (strcmp(text_icon, "heavyrainshowers_night") == 0) || (strcmp(text_icon, "heavyrainshowers_polartwilight") == 0) || (strcmp(text_icon, "heavysleetshowers_day") == 0) || (strcmp(text_icon, "heavysleetshowers_night") == 0) || (strcmp(text_icon, "heavysleetshowers_polartwilight") == 0))
   {
     if ((is_bw_icon) || (!IS_COLOR))
       return RESOURCE_ID_AVERSES_DE_PLUIE_FORTE_W;
     else
       return RESOURCE_ID_AVERSES_DE_PLUIE_FORTE;
   }
-  if (strcmp(text_icon, "10n") == 0)
+  if (strcmp(text_icon, "rainshowers_night") == 0)
   {
     if ((is_bw_icon) || (!IS_COLOR))
       return RESOURCE_ID_NUIT_AVEC_AVERSES_W;
@@ -448,14 +448,14 @@ static int build_icon(char *text_icon)
       return RESOURCE_ID_NUIT_AVEC_AVERSES;
   }
 
-  if (strcmp(text_icon, "thunderstorm") == 0 || strcmp(text_icon, "tornado") == 0 || (strcmp(text_icon, "11d") == 0) || (strcmp(text_icon, "11n") == 0))
+  if (strcmp(text_icon, "rainshowersandthunder_day") == 0 || strcmp(text_icon, "rainshowersandthunder_polartwilight") == 0 || (strcmp(text_icon, "rainshowersandthunder_night") == 0) || (strcmp(text_icon, "heavyrainandthunder") == 0) || (strcmp(text_icon, "sleetshowersandthunder_day") == 0) || (strcmp(text_icon, "sleetshowersandthunder_night") == 0) || (strcmp(text_icon, "sleetshowersandthunder_polartwilight") == 0) || (strcmp(text_icon, "snowshowersandthunder_day") == 0) || (strcmp(text_icon, "snowshowersandthunder_night") == 0) || (strcmp(text_icon, "snowshowersandthunder_polartwilight") == 0) || (strcmp(text_icon, "rainandthunder") == 0) || (strcmp(text_icon, "sleetandthunder") == 0) || (strcmp(text_icon, "lightrainshowersandthunder_day") == 0) || (strcmp(text_icon, "lightrainshowersandthunder_night") == 0) || (strcmp(text_icon, "lightrainshowersandthunder_polartwilight") == 0) || (strcmp(text_icon, "heavyrainshowersandthunder_day") == 0) || (strcmp(text_icon, "heavyrainshowersandthunder_night") == 0) || (strcmp(text_icon, "heavyrainshowersandthunder_polartwilight") == 0) || (strcmp(text_icon, "lightssleetshowersandthunder_day") == 0) || (strcmp(text_icon, "lightssleetshowersandthunder_night") == 0) || (strcmp(text_icon, "lightssleetshowersandthunder_polartwilight") == 0) || (strcmp(text_icon, "heavysleetshowersandthunder_day") == 0) || (strcmp(text_icon, "heavysleetshowersandthunder_night") == 0) || (strcmp(text_icon, "heavysleetshowersandthunder_polartwilight") == 0) || (strcmp(text_icon, "lightssnowshowersandthunder_day") == 0) || (strcmp(text_icon, "lightssnowshowersandthunder_night") == 0) || (strcmp(text_icon, "lightssnowshowersandthunder_polartwilight") == 0) || (strcmp(text_icon, "lightrainandthunder") == 0) || (strcmp(text_icon, "lightsleetandthunder") == 0) || (strcmp(text_icon, "heavysleetandthunder") == 0) || (strcmp(text_icon, "lightsnowandthunder") == 0) || (strcmp(text_icon, "heavysnowandthunder") == 0))
   {
     if ((is_bw_icon) || (!IS_COLOR))
       return RESOURCE_ID_FORTEMENT_ORAGEUX_W;
     else
       return RESOURCE_ID_FORTEMENT_ORAGEUX;
   }
-  if (strcmp(text_icon, "snow") == 0 || strcmp(text_icon, "sleet") == 0 || (strcmp(text_icon, "13d") == 0) || (strcmp(text_icon, "13n") == 0))
+  if (strcmp(text_icon, "sleetshowers_day") == 0 || strcmp(text_icon, "sleetshowers_night") == 0 || (strcmp(text_icon, "sleetshowers_polartwilight") == 0) || (strcmp(text_icon, "snowshowers_day") == 0) || (strcmp(text_icon, "snowshowers_night") == 0) || (strcmp(text_icon, "snowshowers_polartwilight") == 0) || (strcmp(text_icon, "sleet") == 0) || (strcmp(text_icon, "snow") == 0) || (strcmp(text_icon, "snowandthunder") == 0) || (strcmp(text_icon, "heavysnowshowersandthunder_day") == 0) || (strcmp(text_icon, "heavysnowshowersandthunder_night") == 0) || (strcmp(text_icon, "heavysnowshowersandthunder_polartwilight") == 0) || (strcmp(text_icon, "lightsnowshowers_day") == 0) || (strcmp(text_icon, "lightsnowshowers_night") == 0) || (strcmp(text_icon, "lightsnowshowers_polartwilight") == 0) || (strcmp(text_icon, "heavysnowshowers_day") == 0) || (strcmp(text_icon, "heavysnowshowers_night") == 0) || (strcmp(text_icon, "heavysnowshowers_polartwilight") == 0) || (strcmp(text_icon, "lightsnow") == 0) || (strcmp(text_icon, "heavysnow") == 0))
   {
     if ((is_bw_icon) || (!IS_COLOR))
       return RESOURCE_ID_NEIGE_FORTE_W;
