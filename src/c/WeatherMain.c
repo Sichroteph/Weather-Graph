@@ -1,4 +1,5 @@
 #include <pebble.h>
+#include <time.h>
 
 #if defined(PBL_ROUND)
 #define IS_ROUND true
@@ -75,7 +76,6 @@
 #define KEY_FORECAST_WIND2 30
 #define KEY_FORECAST_WIND3 31
 #define KEY_LOCATION 32
-
 #define KEY_GPS 33
 #define KEY_INPUT_CITY 34
 
@@ -255,10 +255,6 @@
 
 #define TAP_DURATION 2000
 
-static DictationSession *s_dictation_session;
-// Declare a buffer for the DictationSession
-static char s_last_text[512];
-
 static Window *window;
 static Layer *rootLayer;
 static Layer *layer;
@@ -267,7 +263,6 @@ static Layer *layer;
 
 static char weather_temp[10] = " ";
 
-static bool is_menu = 0;
 static bool is_tapped = true;
 
 static char icon[20] = " ";
@@ -283,8 +278,9 @@ int h6;
 int h7;
 int h8;
 
-static char location[100] = " ";
-static char status[100] = "Contacting phone ...";
+static char location[100] = "";
+static char first_location[100] = "";
+static char statusFull[1000] = "Initializing ...";
 
 static int tmin_val = 0;
 static int tmax_val = 0;
@@ -338,11 +334,11 @@ static int temps[9];
 static char winds[20][20];
 
 // Config data
-
 static bool graph = 0;
 static bool is_metric = 1;
 
 static int page_nb = 1;
+static int is_cache_mode = 0;
 static bool is_bw_icon = 0;
 
 static char pebble_Lang[20] = " ";
@@ -354,6 +350,8 @@ static GFont statusfontsmall;
 static GFont statusfontsmallbold;
 static GFont statusfontdate;
 
+int scdCounter;
+
 static char *weekdayLangFr[7] = {"DIMANCHE", "LUNDI", "MARDI", "MERCREDI", "JEUDI", "VENDREDI", "SAMEDI"};
 static char *weekdayLangEn[7] = {"SUNDAY", "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY"};
 static char *weekdayLangDe[7] = {"SONNTAG", "MONTAG", "DIENSTAG", "MITTWOCH", "DONNERSTAG", "FREITAG", "SAMSTAG"};
@@ -362,7 +360,6 @@ static char *weekdayLangEs[7] = {"DOMINGO", "LUNES", "MARTES", "MIERCOLES", "JUE
 static int build_icon(char *text_icon)
 {
   // APP_LOG(APP_LOG_LEVEL_INFO, "texte ICONE  %s", text_icon);
-
   if ((strcmp(text_icon, "clearsky_day") == 0))
   {
     if ((is_bw_icon) || (!IS_COLOR))
@@ -370,7 +367,7 @@ static int build_icon(char *text_icon)
     else
       return RESOURCE_ID_ENSOLEILLE;
   }
-  if ((strcmp(text_icon, "clearsky_night") == 0) || (strcmp(text_icon, "01n") == 0))
+  if ((strcmp(text_icon, "clearsky_night") == 0))
   {
     if ((is_bw_icon) || (!IS_COLOR))
       return RESOURCE_ID_NUIT_CLAIRE_W;
@@ -384,19 +381,19 @@ static int build_icon(char *text_icon)
     else
       return RESOURCE_ID_FAIBLES_PASSAGES_NUAGEUX;
   }
-  if (strcmp(text_icon, "wind") == 0)
-  {
-    if ((is_bw_icon) || (!IS_COLOR))
-      return RESOURCE_ID_WIND;
-    else
-      return RESOURCE_ID_WIND;
-  }
   if (strcmp(text_icon, "fair_night") == 0)
   {
     if ((is_bw_icon) || (!IS_COLOR))
       return RESOURCE_ID_NUIT_BIEN_DEGAGEE_W;
     else
       return RESOURCE_ID_NUIT_BIEN_DEGAGEE;
+  }
+  if (strcmp(text_icon, "wind") == 0)
+  {
+    if ((is_bw_icon) || (!IS_COLOR))
+      return RESOURCE_ID_WIND;
+    else
+      return RESOURCE_ID_WIND;
   }
   if ((strcmp(text_icon, "partlycloudy_day") == 0) || (strcmp(text_icon, "partlycloudy_polartwilight") == 0))
   {
@@ -405,35 +402,22 @@ static int build_icon(char *text_icon)
     else
       return RESOURCE_ID_DEVELOPPEMENT_NUAGEUX;
   }
-  if ((strcmp(text_icon, "partlycloudy_night") == 0) || (strcmp(text_icon, "03n") == 0))
+  if ((strcmp(text_icon, "partlycloudy_night") == 0))
   {
     if ((is_bw_icon) || (!IS_COLOR))
       return RESOURCE_ID_NUIT_AVEC_DEVELOPPEMENT_NUAGEUX_W;
     else
       return RESOURCE_ID_NUIT_AVEC_DEVELOPPEMENT_NUAGEUX;
   }
-  if ((strcmp(text_icon, "cloudy") == 0) || (strcmp(text_icon, "04d") == 0))
+  if ((strcmp(text_icon, "cloudy") == 0))
   {
     if ((is_bw_icon) || (!IS_COLOR))
       return RESOURCE_ID_FORTEMENT_NUAGEUX_W;
     else
       return RESOURCE_ID_FORTEMENT_NUAGEUX;
   }
-  if (strcmp(text_icon, "04n") == 0)
-  {
-    if ((is_bw_icon) || (!IS_COLOR))
-      return RESOURCE_ID_NUIT_NUAGEUSE_W;
-    else
-      return RESOURCE_ID_NUIT_NUAGEUSE;
-  }
-  if (strcmp(text_icon, "lightrainshowers_day") == 0 || strcmp(text_icon, "lightrainshowers_night") == 0 || strcmp(text_icon, "lightrainshowers_polartwilight") == 0 || strcmp(text_icon, "lightsleetshowers_day") == 0 || strcmp(text_icon, "lightsleetshowers_night") == 0 || strcmp(text_icon, "lightsleetshowers_polartwilight") == 0 || strcmp(text_icon, "lightrain") == 0 || strcmp(text_icon, "lightsleet") == 0)
-  {
-    if ((is_bw_icon) || (!IS_COLOR))
-      return RESOURCE_ID_COUVERT_AVEC_AVERSES_W;
-    else
-      return RESOURCE_ID_COUVERT_AVEC_AVERSES;
-  }
-  if ((strcmp(text_icon, "rainshowers_day") == 0) || (strcmp(text_icon, "rainshowers_polartwilight") == 0) || (strcmp(text_icon, "heavyrain") == 0) || (strcmp(text_icon, "heavyrainshowers_day") == 0) || (strcmp(text_icon, "heavyrainshowers_night") == 0) || (strcmp(text_icon, "heavyrainshowers_polartwilight") == 0) || (strcmp(text_icon, "heavysleetshowers_day") == 0) || (strcmp(text_icon, "heavysleetshowers_night") == 0) || (strcmp(text_icon, "heavysleetshowers_polartwilight") == 0))
+
+  if (strstr(text_icon, "rain") != NULL)
   {
     if ((is_bw_icon) || (!IS_COLOR))
       return RESOURCE_ID_AVERSES_DE_PLUIE_FORTE_W;
@@ -448,27 +432,29 @@ static int build_icon(char *text_icon)
       return RESOURCE_ID_NUIT_AVEC_AVERSES;
   }
 
-  if (strcmp(text_icon, "rainshowersandthunder_day") == 0 || strcmp(text_icon, "rainshowersandthunder_polartwilight") == 0 || (strcmp(text_icon, "rainshowersandthunder_night") == 0) || (strcmp(text_icon, "heavyrainandthunder") == 0) || (strcmp(text_icon, "sleetshowersandthunder_day") == 0) || (strcmp(text_icon, "sleetshowersandthunder_night") == 0) || (strcmp(text_icon, "sleetshowersandthunder_polartwilight") == 0) || (strcmp(text_icon, "snowshowersandthunder_day") == 0) || (strcmp(text_icon, "snowshowersandthunder_night") == 0) || (strcmp(text_icon, "snowshowersandthunder_polartwilight") == 0) || (strcmp(text_icon, "rainandthunder") == 0) || (strcmp(text_icon, "sleetandthunder") == 0) || (strcmp(text_icon, "lightrainshowersandthunder_day") == 0) || (strcmp(text_icon, "lightrainshowersandthunder_night") == 0) || (strcmp(text_icon, "lightrainshowersandthunder_polartwilight") == 0) || (strcmp(text_icon, "heavyrainshowersandthunder_day") == 0) || (strcmp(text_icon, "heavyrainshowersandthunder_night") == 0) || (strcmp(text_icon, "heavyrainshowersandthunder_polartwilight") == 0) || (strcmp(text_icon, "lightssleetshowersandthunder_day") == 0) || (strcmp(text_icon, "lightssleetshowersandthunder_night") == 0) || (strcmp(text_icon, "lightssleetshowersandthunder_polartwilight") == 0) || (strcmp(text_icon, "heavysleetshowersandthunder_day") == 0) || (strcmp(text_icon, "heavysleetshowersandthunder_night") == 0) || (strcmp(text_icon, "heavysleetshowersandthunder_polartwilight") == 0) || (strcmp(text_icon, "lightssnowshowersandthunder_day") == 0) || (strcmp(text_icon, "lightssnowshowersandthunder_night") == 0) || (strcmp(text_icon, "lightssnowshowersandthunder_polartwilight") == 0) || (strcmp(text_icon, "lightrainandthunder") == 0) || (strcmp(text_icon, "lightsleetandthunder") == 0) || (strcmp(text_icon, "heavysleetandthunder") == 0) || (strcmp(text_icon, "lightsnowandthunder") == 0) || (strcmp(text_icon, "heavysnowandthunder") == 0))
+  if (strstr(text_icon, "thunder") != NULL)
   {
     if ((is_bw_icon) || (!IS_COLOR))
       return RESOURCE_ID_FORTEMENT_ORAGEUX_W;
     else
       return RESOURCE_ID_FORTEMENT_ORAGEUX;
   }
-  if (strcmp(text_icon, "sleetshowers_day") == 0 || strcmp(text_icon, "sleetshowers_night") == 0 || (strcmp(text_icon, "sleetshowers_polartwilight") == 0) || (strcmp(text_icon, "snowshowers_day") == 0) || (strcmp(text_icon, "snowshowers_night") == 0) || (strcmp(text_icon, "snowshowers_polartwilight") == 0) || (strcmp(text_icon, "sleet") == 0) || (strcmp(text_icon, "snow") == 0) || (strcmp(text_icon, "snowandthunder") == 0) || (strcmp(text_icon, "heavysnowshowersandthunder_day") == 0) || (strcmp(text_icon, "heavysnowshowersandthunder_night") == 0) || (strcmp(text_icon, "heavysnowshowersandthunder_polartwilight") == 0) || (strcmp(text_icon, "lightsnowshowers_day") == 0) || (strcmp(text_icon, "lightsnowshowers_night") == 0) || (strcmp(text_icon, "lightsnowshowers_polartwilight") == 0) || (strcmp(text_icon, "heavysnowshowers_day") == 0) || (strcmp(text_icon, "heavysnowshowers_night") == 0) || (strcmp(text_icon, "heavysnowshowers_polartwilight") == 0) || (strcmp(text_icon, "lightsnow") == 0) || (strcmp(text_icon, "heavysnow") == 0))
+
+  if (strstr(text_icon, "snow") || (strstr(text_icon, "sleet")) != NULL)
   {
     if ((is_bw_icon) || (!IS_COLOR))
       return RESOURCE_ID_NEIGE_FORTE_W;
     else
       return RESOURCE_ID_NEIGE_FORTE;
   }
-  if (strcmp(text_icon, "fog") == 0 || strcmp(text_icon, "hail") == 0 || (strcmp(text_icon, "50d") == 0) || (strcmp(text_icon, "50n") == 0))
+  if (strcmp(text_icon, "fog") == 0)
   {
     if ((is_bw_icon) || (!IS_COLOR))
       return RESOURCE_ID_BROUILLARD_W;
     else
       return RESOURCE_ID_BROUILLARD;
   }
+
   return RESOURCE_ID_BT;
 }
 int abs(int x)
@@ -481,7 +467,6 @@ int abs(int x)
 
 static void createdatetext(int day_i)
 {
-
   if (strcmp(pebble_Lang, "en_US") == 0)
   {
     snprintf(day_buffer, sizeof(day_buffer), "%s", weekdayLangEn[day_i]);
@@ -524,131 +509,23 @@ static void layer_update(Layer *me, GContext *ctx)
   if (!is_weather_aquired)
   {
 
-    s_icon = gbitmap_create_with_resource(RESOURCE_ID_BT);
+    GRect rect_location = {{0, is_cache_mode*0}, {WIDTH, 50}};
+    graphics_draw_text(ctx, location, fonts_get_system_font(FONT_KEY_BITHAM_30_BLACK), rect_location, GTextOverflowModeWordWrap,
+                       GTextAlignmentCenter, NULL);
 
-    // Recuperation des données précedentes
-    persist_read_string(KEY_TEMPERATURE, weather_temp, sizeof(weather_temp));
-    persist_read_string(KEY_WIND_SPEED, wind_speed_val, sizeof(wind_speed_val));
-    persist_read_string(KEY_HUMIDITY, humidity, sizeof(humidity));
-    persist_read_string(KEY_SUNRISE, sunrise, sizeof(sunrise));
-    persist_read_string(KEY_SUNSET, sunset, sizeof(sunset));
-    persist_read_string(KEY_TMIN, tmin, sizeof(tmin));
-    persist_read_string(KEY_TMAX, tmax, sizeof(tmax));
-    persist_read_string(KEY_ICON, icon, sizeof(icon));
-
-    if (strcmp(status, "Contacting phone ...") == 0)
+    if (is_cache_mode == 0)
     {
-      // On remplit à 33%
-      for (int i = 0; i < 6; i++)
-      {
-        circle_page.x = 10 * i + 65 + PAGE_POINTS_OFFSET;
-        graphics_fill_circle(ctx, circle_page, 1);
-      }
-      for (int i = 0; i < 2; i++)
-      {
-        circle_page.x = 10 * i + 65 + PAGE_POINTS_OFFSET;
-        graphics_fill_circle(ctx, circle_page, 2);
-      }
+      GRect rect_center = {{WIDTH / 2 - 7, 71}, {15, 15}};
+      s_icon = gbitmap_create_with_resource(RESOURCE_ID_LOADING);
+      graphics_draw_bitmap_in_rect(ctx, s_icon, rect_center);
+      gbitmap_destroy(s_icon);
+
+      // GRect rect_log = {{15, 90}, {WIDTH, 180}};
+      GRect rect_log = {{0, 90}, {WIDTH, 180}};
+
+      graphics_draw_text(ctx, statusFull, fonts_get_system_font(FONT_KEY_GOTHIC_14), rect_log, GTextOverflowModeWordWrap,
+                         GTextAlignmentCenter, NULL);
     }
-    else if (strcmp(status, "Getting forecast ...") == 0)
-    {
-      // On remplit à 66%
-      for (int i = 0; i < 6; i++)
-      {
-        circle_page.x = 10 * i + 65 + PAGE_POINTS_OFFSET;
-        graphics_fill_circle(ctx, circle_page, 1);
-      }
-      for (int i = 0; i < 4; i++)
-      {
-        circle_page.x = 10 * i + 65 + PAGE_POINTS_OFFSET;
-        graphics_fill_circle(ctx, circle_page, 2);
-      }
-    }
-
-    else if (strcmp(status, "Getting position ...") == 0)
-    {
-      // On remplit à 50%
-      for (int i = 0; i < 6; i++)
-      {
-        circle_page.x = 10 * i + 65 + PAGE_POINTS_OFFSET;
-        graphics_fill_circle(ctx, circle_page, 1);
-      }
-      for (int i = 0; i < 3; i++)
-      {
-        circle_page.x = 10 * i + 65 + PAGE_POINTS_OFFSET;
-        graphics_fill_circle(ctx, circle_page, 2);
-      }
-    }
-
-    GRect rect_center = {{WIDTH / 2 - 8, 140}, {15, 15}};
-    s_icon = gbitmap_create_with_resource(RESOURCE_ID_LOADING);
-    graphics_draw_bitmap_in_rect(ctx, s_icon, rect_center);
-    gbitmap_destroy(s_icon);
-
-    static char status_text[100];
-
-#if defined(PBL_ROUND)
-    GRect rect_temp = {{-23, 19}, {WIDTH, 50}};
-
-    GRect rect_tmax = {{10, 52}, {50, 20}};
-    GRect rect_tmin = {{10, 73}, {50, 20}};
-
-    GRect rect_icon = {{22, 22}, {36, 36}};
-
-    GRect rect_location = {{20, 127}, {WIDTH - 40, 20}};
-
-    GRect rect_humidity = {{-23, 73}, {WIDTH, 36}};
-    GRect rect_wind = {{-23, 52}, {WIDTH, 36}};
-    GRect rect_text_sunrise = {{-23, 103}, {WIDTH, 36}};
-    GRect rect_icon_sunrise = {{21, 110}, {48, 20}};
-    GRect rect_text_sunset = {{-23, 123}, {WIDTH, 36}};
-    GRect rect_icon_sunset = {{21, 130}, {48, 20}};
-
-#else
-    GRect rect_temp = {{0, 5}, {WIDTH, 50}};
-
-    GRect rect_tmin = {{-17, 18}, {62, 20}};
-    GRect rect_tmax = {{-17, -2}, {62, 20}};
-
-    GRect rect_icon = {{3, 58}, {36, 36}};
-
-    // GRect rect_icon_humidity = { { 3,  50}, { 45, 25 } };
-    GRect rect_humidity = {{0, 63}, {WIDTH, 36}};
-    GRect rect_wind = {{0, 43}, {WIDTH, 36}};
-    GRect rect_text_sunrise = {{0, 98}, {WIDTH, 36}};
-    GRect rect_icon_sunrise = {{3, 105}, {48, 20}};
-    GRect rect_text_sunset = {{0, 118}, {WIDTH, 36}};
-    GRect rect_icon_sunset = {{3, 125}, {48, 20}};
-
-    GRect rect_location = {{2, 125}, {WIDTH - 2, 20}};
-
-#endif
-
-    time_t t = time(NULL);
-    struct tm now = *(localtime(&t));
-
-    graphics_context_set_text_color(ctx, GColorWhite);
-    snprintf(status_text, sizeof(status_text), "%s %i", weekdayLangEn[now.tm_wday], now.tm_mday);
-
-    //   APP_LOG(APP_LOG_LEVEL_INFO, "location page1 %s", location);
-
-    // draw icon
-    int icon_id;
-    icon_id = build_icon(icon);
-
-    graphics_context_set_compositing_mode(ctx, GCompOpSet);
-
-    s_icon = gbitmap_create_with_resource(icon_id);
-    // graphics_draw_bitmap_in_rect(ctx, s_icon, rect_icon);
-    gbitmap_destroy(s_icon);
-    s_icon = gbitmap_create_with_resource(RESOURCE_ID_SUNRISE);
-    // graphics_draw_bitmap_in_rect(ctx, s_icon, rect_icon_sunrise);
-    gbitmap_destroy(s_icon);
-    s_icon = gbitmap_create_with_resource(RESOURCE_ID_SUNSET);
-    // graphics_draw_bitmap_in_rect(ctx, s_icon, rect_icon_sunset);
-    gbitmap_destroy(s_icon);
-
-    // draw temperature
   }
 
   else
@@ -663,7 +540,6 @@ static void layer_update(Layer *me, GContext *ctx)
     circle_page.x = 10 * (page_nb - 1) + 75 + PAGE_POINTS_OFFSET;
     graphics_fill_circle(ctx, circle_page, 4);
 
-    // page_nb=5;
     if (page_nb == 1)
     {
       static char status_text[100];
@@ -675,8 +551,6 @@ static void layer_update(Layer *me, GContext *ctx)
 
       GRect rect_icon = {{22, 22}, {36, 36}};
 
-      GRect rect_location = {{20, 127}, {WIDTH - 40, 20}};
-
       GRect rect_humidity = {{-23, 73}, {WIDTH, 36}};
       GRect rect_wind = {{-23, 52}, {WIDTH, 36}};
       GRect rect_text_sunrise = {{-23, 103}, {WIDTH, 36}};
@@ -685,22 +559,20 @@ static void layer_update(Layer *me, GContext *ctx)
       GRect rect_icon_sunset = {{21, 130}, {48, 20}};
 
 #else
-      GRect rect_temp = {{0, 5}, {WIDTH, 50}};
+      GRect rect_temp = {{2, -1}, {WIDTH, 50}};
 
       GRect rect_tmin = {{-17, 18}, {62, 20}};
       GRect rect_tmax = {{-17, -2}, {62, 20}};
 
-      GRect rect_icon = {{3, 58}, {36, 36}};
-
       // GRect rect_icon_humidity = { { 3,  50}, { 45, 25 } };
-      GRect rect_humidity = {{0, 63}, {WIDTH, 36}};
-      GRect rect_wind = {{0, 43}, {WIDTH, 36}};
-      GRect rect_text_sunrise = {{0, 98}, {WIDTH, 36}};
-      GRect rect_icon_sunrise = {{3, 105}, {48, 20}};
-      GRect rect_text_sunset = {{0, 118}, {WIDTH, 36}};
-      GRect rect_icon_sunset = {{3, 125}, {48, 20}};
+      GRect rect_icon = {{3, 62}, {36, 36}};
+      GRect rect_humidity = {{0, 47}, {WIDTH, 36}};
+      GRect rect_wind = {{0, 67}, {WIDTH, 36}};
 
-      GRect rect_location = {{2, 125}, {WIDTH - 2, 20}};
+      GRect rect_text_sunrise = {{0, 103}, {WIDTH, 36}};
+      GRect rect_icon_sunrise = {{3, 110}, {48, 20}};
+      GRect rect_text_sunset = {{0, 123}, {WIDTH, 36}};
+      GRect rect_icon_sunset = {{3, 130}, {48, 20}};
 
 #endif
 
@@ -710,7 +582,6 @@ static void layer_update(Layer *me, GContext *ctx)
       graphics_context_set_text_color(ctx, GColorWhite);
       snprintf(status_text, sizeof(status_text), "%s %i", weekdayLangEn[now.tm_wday], now.tm_mday);
 
-      //   APP_LOG(APP_LOG_LEVEL_INFO, "location page1 %s", location);
       // draw icon
       int icon_id;
       icon_id = build_icon(icon);
@@ -733,11 +604,8 @@ static void layer_update(Layer *me, GContext *ctx)
       }
       // draw temperatures
 
-      graphics_draw_text(ctx, weather_temp, fonts_get_system_font(FONT_KEY_BITHAM_30_BLACK), rect_temp, GTextOverflowModeWordWrap,
+      graphics_draw_text(ctx, weather_temp, fonts_get_system_font(FONT_KEY_BITHAM_42_LIGHT), rect_temp, GTextOverflowModeWordWrap,
                          GTextAlignmentRight, NULL);
-
-      graphics_draw_text(ctx, location, fonts_get_system_font(FONT_KEY_GOTHIC_14), rect_location, GTextOverflowModeWordWrap,
-                         GTextAlignmentCenter, NULL);
 
 #if defined(PBL_ROUND)
       graphics_draw_text(ctx, tmin, fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD), rect_tmin, GTextOverflowModeWordWrap,
@@ -766,6 +634,8 @@ static void layer_update(Layer *me, GContext *ctx)
 
     else if ((page_nb == 4) || (page_nb == 5))
     {
+
+      // weather graph
       int index;
 
       // Pour sauter de 2 en 2 les valeurs à chaque page
@@ -790,17 +660,17 @@ static void layer_update(Layer *me, GContext *ctx)
         var_weath_ofF_y += 10;
       }
       //  is_tapped=true;
-      GRect rect_screen = {{0 + WEATHER_OFFSET_X, 0 + var_weath_ofF_y}, {180, 180}};
+      GRect rect_screen = {{0 + WEATHER_OFFSET_X, var_weath_ofF_y}, {180, 180}};
 
       GRect rect_h0 = {{6 + WEATHER_OFFSET_X, 116 + var_weath_ofF_y}, {60, 40}};
       GRect rect_h1 = {{37 + WEATHER_OFFSET_X, 116 + var_weath_ofF_y}, {60, 40}};
       GRect rect_h2 = {{68 + WEATHER_OFFSET_X, 116 + var_weath_ofF_y}, {60, 40}};
       GRect rect_h3 = {{97 + WEATHER_OFFSET_X, 116 + var_weath_ofF_y}, {60, 40}};
 
-      GRect rect_wind0 = {{6 + WEATHER_OFFSET_X, 148 + var_weath_ofF_y}, {60, 10}};
-      GRect rect_wind1 = {{37 + WEATHER_OFFSET_X, 148 + var_weath_ofF_y}, {60, 10}};
-      GRect rect_wind2 = {{68 + WEATHER_OFFSET_X, 148 + var_weath_ofF_y}, {60, 10}};
-      GRect rect_wind3 = {{97 + WEATHER_OFFSET_X, 148 + var_weath_ofF_y}, {60, 10}};
+      GRect rect_wind0 = {{6 + WEATHER_OFFSET_X, 154 + var_weath_ofF_y}, {60, 10}};
+      GRect rect_wind1 = {{37 + WEATHER_OFFSET_X, 154 + var_weath_ofF_y}, {60, 10}};
+      GRect rect_wind2 = {{68 + WEATHER_OFFSET_X, 154 + var_weath_ofF_y}, {60, 10}};
+      GRect rect_wind3 = {{97 + WEATHER_OFFSET_X, 154 + var_weath_ofF_y}, {60, 10}};
 
       rect_wind0.size.h = 40;
       rect_wind1.size.h = 40;
@@ -815,9 +685,9 @@ static void layer_update(Layer *me, GContext *ctx)
       GRect rect_patch = {{WEATHER_OFFSET_X, 150 + var_weath_ofF_y}, {80, 20}};
 #else
 
-      GRect rect_t1 = {{-24 + WEATHER_OFFSET_X, 51 + var_weath_ofF_y}, {60, 20}};
-      GRect rect_t12 = {{-24 + WEATHER_OFFSET_X, 73 + var_weath_ofF_y}, {60, 20}};
-      GRect rect_t2 = {{-24 + WEATHER_OFFSET_X, 95 + var_weath_ofF_y}, {60, 20}};
+      GRect rect_t1 = {{-25 + WEATHER_OFFSET_X, 51 + var_weath_ofF_y}, {60, 20}};
+      GRect rect_t12 = {{-25 + WEATHER_OFFSET_X, 73 + var_weath_ofF_y}, {60, 20}};
+      GRect rect_t2 = {{-25 + WEATHER_OFFSET_X, 95 + var_weath_ofF_y}, {60, 20}};
       GRect rect_patch = {{WEATHER_OFFSET_X, 150 + var_weath_ofF_y}, {80, 20}};
 #endif
 
@@ -1002,9 +872,9 @@ static void layer_update(Layer *me, GContext *ctx)
 
       graphics_draw_line(ctx, GPoint(127 + WEATHER_OFFSET_X, y4 + var_weath_ofF_y + decallage_y), GPoint(157 + WEATHER_OFFSET_X, y5 + var_weath_ofF_y + decallage_y));
 
-      GRect rect_icon1 = {{67 - 18 + WEATHER_OFFSET_X, 28 + var_weath_ofF_y}, {36, 36}};
-      GRect rect_icon2 = {{97 - 18 + WEATHER_OFFSET_X, 28 + var_weath_ofF_y}, {36, 36}};
-      GRect rect_icon3 = {{127 - 18 + WEATHER_OFFSET_X, 28 + var_weath_ofF_y}, {36, 36}};
+      GRect rect_icon1 = {{67 - 18 + WEATHER_OFFSET_X, 25 + var_weath_ofF_y}, {36, 36}};
+      GRect rect_icon2 = {{97 - 18 + WEATHER_OFFSET_X, 25 + var_weath_ofF_y}, {36, 36}};
+      GRect rect_icon3 = {{127 - 18 + WEATHER_OFFSET_X, 25 + var_weath_ofF_y}, {36, 36}};
 
       graphics_context_set_compositing_mode(ctx, GCompOpSet);
 
@@ -1064,7 +934,7 @@ static void layer_update(Layer *me, GContext *ctx)
 
     else if (page_nb == 2)
     {
-
+// Daily page 1
 #if defined(PBL_ROUND)
 
       GRect rect_day1 = {{0, -5}, {WIDTH, 36}};
@@ -1092,21 +962,17 @@ static void layer_update(Layer *me, GContext *ctx)
       int offsetb2x = 17;
       int offsetb2y = 44;
 
-      GRect rect_day1 = {{0, -5}, {WIDTH, 36}};
-      GRect rect_day2 = {{0, 78}, {WIDTH, 36}};
+      GRect rect_day1 = {{0, -10}, {WIDTH, 36}};
+      GRect rect_day1_temp = {{2, 14}, {57, 36}};
+      GRect rect_day1_icon = {{WIDTH / 2 - 23, 23}, {36, 36}};
+      GRect rect_moon1_icon = {{118, 27}, {36, 100}};
+      GRect rect_rain1 = {{WIDTH - 47, 29}, {9, 24}};
 
-      GRect rect_day1_temp = {{2, 24}, {57, 36}};
+      GRect rect_day2 = {{0, 83}, {WIDTH, 36}};
       GRect rect_day2_temp = {{2, 105}, {57, 36}};
-
-      GRect rect_day1_icon = {{WIDTH / 2 - 20, 35}, {36, 36}};
-      GRect rect_day2_icon = {{WIDTH / 2 - 20, 116}, {36, 36}};
-
-      GRect rect_moon1_icon = {{118, 40}, {36, 100}};
-      GRect rect_moon2_icon = {{118, 121}, {36, 36}};
-
-      GRect rect_rain1 = {{WIDTH - 44, 40}, {9, 24}};
-      GRect rect_rain2 = {{WIDTH - 44, 122}, {9, 24}};
-
+      GRect rect_day2_icon = {{WIDTH / 2 - 23, 114}, {36, 36}};
+      GRect rect_moon2_icon = {{118, 118}, {36, 36}};
+      GRect rect_rain2 = {{WIDTH - 47, 122}, {9, 24}};
 #endif
       int ic1 = build_icon(day2_icon);
       int ic2 = build_icon(day3_icon);
@@ -1121,18 +987,25 @@ static void layer_update(Layer *me, GContext *ctx)
 
       // Remplissage du bocal de pluie
       graphics_context_set_fill_color(ctx, GColorVividCerulean);
-      graphics_fill_rect(ctx, GRect(85 + offsetb1x, 62 - dayr[1] + offsetb1y, 5, dayr[1]), 0, GCornerNone);
+      graphics_fill_rect(ctx, GRect(82 + offsetb1x, 52 - dayr[1] + offsetb1y, 5, dayr[1]), 0, GCornerNone);
 
       graphics_context_set_fill_color(ctx, GColorVividCerulean);
-      graphics_fill_rect(ctx, GRect(85 + offsetb2x, 102 - dayr[2] + offsetb2y, 5, dayr[2]), 0, GCornerNone);
+      graphics_fill_rect(ctx, GRect(82 + offsetb2x, 102 - dayr[2] + offsetb2y, 5, dayr[2]), 0, GCornerNone);
 
       // Affichage de la barre de vent
       graphics_context_set_stroke_color(ctx, GColorWhite);
-      graphics_draw_line(ctx, GPoint(79 + offsetb1x, 62 - dayp[1] + offsetb1y), GPoint(81 + offsetb1x, 62 - dayp[1] + offsetb1y));
-      graphics_draw_line(ctx, GPoint(81 + offsetb1x, 62 - dayp[1] + offsetb1y), GPoint(81 + offsetb1x, 62 + offsetb1y));
-
-      graphics_draw_line(ctx, GPoint(79 + offsetb2x, 101 - dayp[2] + offsetb2y), GPoint(81 + offsetb2x, 101 - dayp[2] + offsetb2y));
-      graphics_draw_line(ctx, GPoint(81 + offsetb2x, 101 - dayp[2] + offsetb2y), GPoint(81 + offsetb2x, 101 + offsetb2y));
+      if (dayp[1] != 0)
+      {
+        graphics_draw_line(ctx, GPoint(71 + offsetb1x, 55 - dayp[1] + offsetb1y), GPoint(78 + offsetb1x, 52 - dayp[1] + offsetb1y));
+        graphics_draw_line(ctx, GPoint(78 + offsetb1x, 52 - dayp[1] + offsetb1y), GPoint(78 + offsetb1x, 52 + offsetb1y));
+        graphics_draw_line(ctx, GPoint(71 + offsetb1x, 55 - dayp[1] + offsetb1y), GPoint(78 + offsetb1x, 58 - dayp[1] + offsetb1y));
+      }
+      if (dayp[2] != 0)
+      {
+        graphics_draw_line(ctx, GPoint(71 + offsetb2x, 101 - dayp[2] + offsetb2y), GPoint(78 + offsetb2x, 98 - dayp[2] + offsetb2y));
+        graphics_draw_line(ctx, GPoint(78 + offsetb2x, 98 - dayp[2] + offsetb2y), GPoint(78 + offsetb2x, 98 + offsetb2y));
+        graphics_draw_line(ctx, GPoint(71 + offsetb2x, 101 - dayp[2] + offsetb2y), GPoint(78 + offsetb2x, 104 - dayp[2] + offsetb2y));
+      }
 
       GFont moon_font = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_BOLD_MOON_25));
       if ((moonPhase[1] >= 0) && (moonPhase[1] < 26))
@@ -1173,7 +1046,7 @@ static void layer_update(Layer *me, GContext *ctx)
 
     else if (page_nb == 3)
     {
-
+      // Daily page 2
 #if defined(PBL_ROUND)
       GRect rect_day1 = {{0, -5}, {WIDTH, 36}};
       GRect rect_day2 = {{0, 78}, {WIDTH, 36}};
@@ -1192,20 +1065,17 @@ static void layer_update(Layer *me, GContext *ctx)
 
 #else
 
-      GRect rect_day1 = {{0, -5}, {WIDTH, 36}};
-      GRect rect_day2 = {{0, 78}, {WIDTH, 36}};
+      GRect rect_day1 = {{0, -10}, {WIDTH, 36}};
+      GRect rect_day1_temp = {{2, 14}, {57, 36}};
+      GRect rect_day1_icon = {{WIDTH / 2 - 23, 23}, {36, 36}};
+      GRect rect_moon1_icon = {{118, 27}, {36, 100}};
+      GRect rect_rain1 = {{WIDTH - 47, 29}, {9, 24}};
 
-      GRect rect_day1_temp = {{2, 24}, {57, 36}};
+      GRect rect_day2 = {{0, 83}, {WIDTH, 36}};
       GRect rect_day2_temp = {{2, 105}, {57, 36}};
-
-      GRect rect_day1_icon = {{WIDTH / 2 - 20, 35}, {36, 36}};
-      GRect rect_day2_icon = {{WIDTH / 2 - 20, 116}, {36, 36}};
-
-      GRect rect_moon1_icon = {{118, 40}, {36, 100}};
-      GRect rect_moon2_icon = {{118, 121}, {36, 36}};
-
-      GRect rect_rain1 = {{WIDTH - 44, 40}, {9, 24}};
-      GRect rect_rain2 = {{WIDTH - 44, 122}, {9, 24}};
+      GRect rect_day2_icon = {{WIDTH / 2 - 23, 114}, {36, 36}};
+      GRect rect_moon2_icon = {{118, 118}, {36, 36}};
+      GRect rect_rain2 = {{WIDTH - 47, 122}, {9, 24}};
 
 #endif
       int ic1 = build_icon(day4_icon);
@@ -1213,8 +1083,6 @@ static void layer_update(Layer *me, GContext *ctx)
 
       s_icon = gbitmap_create_with_resource(ic1);
       graphics_draw_bitmap_in_rect(ctx, s_icon, rect_day1_icon);
-      gbitmap_destroy(s_icon);
-
       s_icon = gbitmap_create_with_resource(ic2);
       graphics_draw_bitmap_in_rect(ctx, s_icon, rect_day2_icon);
       gbitmap_destroy(s_icon);
@@ -1225,19 +1093,28 @@ static void layer_update(Layer *me, GContext *ctx)
       int offsetb2y = 44;
 
       // Remplissage du bocal de pluie
-      graphics_context_set_fill_color(ctx, GColorVividCerulean);
-      graphics_fill_rect(ctx, GRect(85 + offsetb1x, 62 - dayr[3] + offsetb1y, 5, dayr[3]), 0, GCornerNone);
 
       graphics_context_set_fill_color(ctx, GColorVividCerulean);
-      graphics_fill_rect(ctx, GRect(85 + offsetb2x, 102 - dayr[4] + offsetb2y, 5, dayr[4]), 0, GCornerNone);
+      graphics_fill_rect(ctx, GRect(82 + offsetb1x, 52 - dayr[3] + offsetb1y, 5, dayr[3]), 0, GCornerNone);
+
+      graphics_context_set_fill_color(ctx, GColorVividCerulean);
+      graphics_fill_rect(ctx, GRect(82 + offsetb2x, 102 - dayr[4] + offsetb2y, 5, dayr[4]), 0, GCornerNone);
 
       // Affichage de la barre de vent
       graphics_context_set_stroke_color(ctx, GColorWhite);
-      graphics_draw_line(ctx, GPoint(79 + offsetb1x, 62 - dayp[3] + offsetb1y), GPoint(81 + offsetb1x, 62 - dayp[3] + offsetb1y));
-      graphics_draw_line(ctx, GPoint(81 + offsetb1x, 62 - dayp[3] + offsetb1y), GPoint(81 + offsetb1x, 62 + offsetb1y));
-
-      graphics_draw_line(ctx, GPoint(79 + offsetb2x, 101 - dayp[4] + offsetb2y), GPoint(81 + offsetb2x, 101 - dayp[4] + offsetb2y));
-      graphics_draw_line(ctx, GPoint(81 + offsetb2x, 101 - dayp[4] + offsetb2y), GPoint(81 + offsetb2x, 101 + offsetb2y));
+      if (dayp[3] != 0)
+        if (dayp[1] != 0)
+        {
+          graphics_draw_line(ctx, GPoint(71 + offsetb1x, 55 - dayp[3] + offsetb1y), GPoint(78 + offsetb1x, 52 - dayp[3] + offsetb1y));
+          graphics_draw_line(ctx, GPoint(78 + offsetb1x, 52 - dayp[3] + offsetb1y), GPoint(78 + offsetb1x, 52 + offsetb1y));
+          graphics_draw_line(ctx, GPoint(71 + offsetb1x, 55 - dayp[3] + offsetb1y), GPoint(78 + offsetb1x, 58 - dayp[3] + offsetb1y));
+        }
+      if (dayp[2] != 0)
+      {
+        graphics_draw_line(ctx, GPoint(71 + offsetb2x, 101 - dayp[4] + offsetb2y), GPoint(78 + offsetb2x, 98 - dayp[4] + offsetb2y));
+        graphics_draw_line(ctx, GPoint(78 + offsetb2x, 98 - dayp[4] + offsetb2y), GPoint(78 + offsetb2x, 98 + offsetb2y));
+        graphics_draw_line(ctx, GPoint(71 + offsetb2x, 101 - dayp[4] + offsetb2y), GPoint(78 + offsetb2x, 104 - dayp[4] + offsetb2y));
+      }
 
       GFont moon_font = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_BOLD_MOON_25));
       if ((moonPhase[3] >= 0) && (moonPhase[3] < 26))
@@ -1276,29 +1153,13 @@ static void layer_update(Layer *me, GContext *ctx)
       gbitmap_destroy(s_icon);
     }
   }
-  if (is_menu)
-  {
-    if (IS_ROUND)
-    {
-      GRect rect_menu = {{0, 0}, {WIDTH, HEIGHT}};
-      s_icon = gbitmap_create_with_resource(RESOURCE_ID_BACK_SELECTION_ROUND);
-      graphics_draw_bitmap_in_rect(ctx, s_icon, rect_menu);
-      gbitmap_destroy(s_icon);
-    }
-    else
-    {
-      GRect rect_menu = {{0, 0}, {WIDTH, HEIGHT}};
-      s_icon = gbitmap_create_with_resource(RESOURCE_ID_BACK_SELECTION_SQUARE);
-      graphics_draw_bitmap_in_rect(ctx, s_icon, rect_menu);
-      gbitmap_destroy(s_icon);
-    }
-  }
 }
 
 static void inbox_received_callback(DictionaryIterator *iterator, void *context)
 {
 
   Tuple *status_tuple = dict_find(iterator, KEY_STATUS);
+  Tuple *location_tuple = dict_find(iterator, KEY_LOCATION);
 
   Tuple *graph_tuple = dict_find(iterator, KEY_GRAPH);
 
@@ -1335,7 +1196,6 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
   Tuple *icon5_tuple = dict_find(iterator, KEY_FORECAST_ICON5);
   Tuple *icon6_tuple = dict_find(iterator, KEY_FORECAST_ICON6);
   Tuple *icon7_tuple = dict_find(iterator, KEY_FORECAST_ICON7);
-  Tuple *location_tuple = dict_find(iterator, KEY_LOCATION);
   Tuple *temp1_tuple = dict_find(iterator, KEY_FORECAST_TEMP1);
   Tuple *temp2_tuple = dict_find(iterator, KEY_FORECAST_TEMP2);
   Tuple *temp3_tuple = dict_find(iterator, KEY_FORECAST_TEMP3);
@@ -1415,16 +1275,45 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
 
   if (status_tuple)
   {
-    snprintf(status, sizeof(status), "%s", status_tuple->value->cstring);
+    char statusTemp[100];
+    snprintf(statusTemp, sizeof(statusTemp), "%s%s", statusTemp, status_tuple->value->cstring);
+    if ((strcmp(statusTemp, "END_TRANSMISSION") == 0))
+    {
+      //   APP_LOG(APP_LOG_LEVEL_DEBUG, "status received %s",statusTemp);
+      psleep(200);
+      is_weather_aquired = true;
+    }
+    else
+    {
+      strcat(statusFull, statusTemp);
+      // APP_LOG(APP_LOG_LEVEL_DEBUG, "statusTemp %s", statusTemp);
+    }
+    layer_mark_dirty(layer);
+  }
+  else if (location_tuple)
+  {
+    snprintf(location, sizeof(location), "%s", location_tuple->value->cstring);
+
+    if (strcmp(first_location, "") == 0)
+    {
+      snprintf(first_location, sizeof(first_location), "%s", location);
+    }
+    else
+    {
+      if (strcmp(first_location, location) == 0)
+      {
+        is_cache_mode = 1;
+      }
+    }
+
+    //  APP_LOG(APP_LOG_LEVEL_DEBUG, "location_tuple %s", location);
     layer_mark_dirty(layer);
     //  psleep(2000);
   }
 
-  // If all data is available, use it
-
-  if (temp_tuple && graph_tuple && tmin_tuple && tmax_tuple && h1_tuple && h2_tuple && h3_tuple && wind1_tuple && wind2_tuple && wind3_tuple && location_tuple && temp1_tuple && temp1_tuple && temp2_tuple && temp3_tuple && temp4_tuple && temp5_tuple && icon1_tuple && icon2_tuple && icon3_tuple && rain1_tuple && rain2_tuple && rain3_tuple && rain4_tuple && temp6_tuple && temp7_tuple && temp8_tuple && temp9_tuple && h4_tuple && h5_tuple && h6_tuple && h7_tuple && rain5_tuple && rain6_tuple && rain7_tuple && rain8_tuple && icon4_tuple && icon5_tuple && icon6_tuple && icon7_tuple && wind4_tuple && wind5_tuple && wind6_tuple && wind7_tuple && day1_tuple && day2_tuple && day3_tuple && day1_icon_tuple && day2_icon_tuple && day3_icon_tuple && KEY_DAY1R && KEY_DAY2R && KEY_DAY3R && KEY_DAY4R && KEY_DAY5R && KEY_DAY6R)
+  else if (temp_tuple && graph_tuple && tmin_tuple && tmax_tuple && h1_tuple && h2_tuple && h3_tuple && wind1_tuple && wind2_tuple && wind3_tuple && temp1_tuple && temp1_tuple && temp2_tuple && temp3_tuple && temp4_tuple && temp5_tuple && icon1_tuple && icon2_tuple && icon3_tuple && rain1_tuple && rain2_tuple && rain3_tuple && rain4_tuple && temp6_tuple && temp7_tuple && temp8_tuple && temp9_tuple && h4_tuple && h5_tuple && h6_tuple && h7_tuple && rain5_tuple && rain6_tuple && rain7_tuple && rain8_tuple && icon4_tuple && icon5_tuple && icon6_tuple && icon7_tuple && wind4_tuple && wind5_tuple && wind6_tuple && wind7_tuple && day1_tuple && day2_tuple && day3_tuple && day1_icon_tuple && day2_icon_tuple && day3_icon_tuple && KEY_DAY1R && KEY_DAY2R && KEY_DAY3R && KEY_DAY4R && KEY_DAY5R && KEY_DAY6R)
   {
-
+    // If all data is available, use it
     graph = graph_tuple->value->int32;
     // APP_LOG(APP_LOG_LEVEL_DEBUG,"c++ graph %d", graph);
 
@@ -1433,8 +1322,6 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
     snprintf(tmin, sizeof(tmin), "%s", tmin_tuple->value->cstring);
 
     snprintf(tmax, sizeof(tmax), "%s", tmax_tuple->value->cstring);
-
-    snprintf(location, sizeof(location), "%s", location_tuple->value->cstring);
 
     snprintf(sunrise, sizeof(sunrise), "%s", sunrise_tuple->value->cstring);
 
@@ -1560,7 +1447,8 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
     last_refresh = mktime(&now);
 
     //  APP_LOG(APP_LOG_LEVEL_DEBUG,"dirty inbox_received_callback + weather");
-    is_weather_aquired = true;
+
+    /*
     if (graph)
     {
       page_nb = 2;
@@ -1570,6 +1458,7 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
 
       page_nb = 1;
     }
+*/
 
     // On sauve les resultats pour un prochain lancement de l'app
     persist_write_string(KEY_ICON, icon);
@@ -1580,9 +1469,6 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
     persist_write_string(KEY_TMAX, tmax);
     persist_write_string(KEY_SUNRISE, sunrise);
     persist_write_string(KEY_SUNSET, sunset);
-
-    vibes_double_pulse();
-    layer_mark_dirty(layer);
   }
 }
 
@@ -1595,119 +1481,80 @@ static void outbox_sent_callback(DictionaryIterator *iterator, void *context)
 {
   //   APP_LOG(APP_LOG_LEVEL_INFO, "Outbox send success!");
 }
-static void dictation_session_callback(DictationSession *session, DictationSessionStatus status,
-                                       char *transcription, void *context)
-{
-  // Print the results of a transcription attempt
-  //   APP_LOG(APP_LOG_LEVEL_INFO, "Dictation status: %d", (int)status);
-
-  if (status == DictationSessionStatusSuccess)
-  {
-    // Display the dictated text
-    snprintf(s_last_text, sizeof(s_last_text), "Transcription:\n\n%s", transcription);
-    //     APP_LOG(APP_LOG_LEVEL_INFO, "transcription status: %s", transcription);
-    // text_layer_set_text(s_output_layer, s_last_text);
-    // send sentence to weather
-    DictionaryIterator *iter;
-    app_message_outbox_begin(&iter);
-
-    // Add a key-value pair
-
-    dict_write_cstring(iter, KEY_LOCATION, transcription);
-    // Send the message!
-    app_message_outbox_send();
-    is_weather_aquired = false;
-    snprintf(location, sizeof(location), "%s %s", "Acquiring weather for", transcription);
-
-    layer_mark_dirty(layer);
-  }
-  else
-  {
-    // Display the reason for any error
-    static char s_failed_buff[128];
-    snprintf(s_failed_buff, sizeof(s_failed_buff), "Transcription failed.\n\nReason:\n%d",
-             (int)status);
-    // text_layer_set_text(s_output_layer, s_failed_buff);
-  }
-}
 
 static void up_click_handler(ClickRecognizerRef recognizer, void *context)
 {
-  if (!is_menu)
+
+  if (is_weather_aquired)
   {
-    if (is_weather_aquired)
+    if (page_nb > 1)
     {
-      if (page_nb > 1)
-      {
-        page_nb--;
-      }
-      else
-      {
-        page_nb = 5;
-      }
-      layer_mark_dirty(layer);
-    }
-  }
-  else
-  {
-    is_menu = 0;
-    if (IS_COLOR)
-    {
-      // Create new dictation session
-      s_dictation_session = dictation_session_create(sizeof(s_last_text),
-                                                     dictation_session_callback, NULL);
-      // Start dictation UI
-      dictation_session_start(s_dictation_session);
+      page_nb--;
     }
     else
     {
-      layer_mark_dirty(layer);
+      page_nb = 5;
     }
+    layer_mark_dirty(layer);
   }
 }
 
 static void select_click_handler(ClickRecognizerRef recognizer, void *context)
 {
-  if (IS_COLOR)
-  {
-    is_menu = !is_menu;
-    layer_mark_dirty(layer);
-  }
-}
+  // APP_LOG(APP_LOG_LEVEL_INFO, "Hello  %s", "trest");
 
-static void down_click_handler(ClickRecognizerRef recognizer, void *context)
-{
-  if (!is_menu)
-  {
-    if (is_weather_aquired)
-    {
-      if (page_nb < 5)
-      {
-        page_nb++;
-      }
-      else
-      {
-        page_nb = 1;
-      }
-      layer_mark_dirty(layer);
-    }
-  }
-  else
-  {
-    is_menu = 0;
-    // text_layer_set_text(s_output_layer, s_last_text);
-    //  send sentence to weather
-    DictionaryIterator *iter;
-    app_message_outbox_begin(&iter);
-
-    char transcription[20] = "";
+  /*
+    char transcription[20] = "1234";
     // Add a key-value pair
 
     dict_write_cstring(iter, KEY_LOCATION, transcription);
     // Send the message!
     app_message_outbox_send();
-    is_weather_aquired = false;
-    snprintf(location, sizeof(location), "%s", "Acquiring position...");
+    // show logs panel
+   */
+
+  app_message_open(2000, 50);
+
+  DictionaryIterator *iter;
+  app_message_outbox_begin(&iter);
+  app_message_outbox_send();
+
+  is_weather_aquired = false;
+
+  strcpy(statusFull, "Initializing ...");
+  location[0] = '\0';
+
+  // layer_mark_dirty(layer);
+}
+
+static void handle_tick(struct tm *cur, TimeUnits units_changed)
+{
+  scdCounter++;
+
+  if (scdCounter == 2)
+  {
+
+    app_message_open(2000, 50);
+    DictionaryIterator *iter;
+    app_message_outbox_begin(&iter);
+    app_message_outbox_send();
+    tick_timer_service_unsubscribe();
+  }
+}
+
+static void down_click_handler(ClickRecognizerRef recognizer, void *context)
+{
+
+  if (is_weather_aquired)
+  {
+    if (page_nb < 5)
+    {
+      page_nb++;
+    }
+    else
+    {
+      page_nb = 1;
+    }
     layer_mark_dirty(layer);
   }
 }
@@ -1716,8 +1563,9 @@ static void click_config_provider(void *context)
 {
   // Register the ClickHandlers
   window_single_click_subscribe(BUTTON_ID_UP, up_click_handler);
-  // window_single_click_subscribe(BUTTON_ID_SELECT, select_click_handler);
+  window_single_click_subscribe(BUTTON_ID_SELECT, select_click_handler);
   window_single_click_subscribe(BUTTON_ID_DOWN, down_click_handler);
+  tick_timer_service_subscribe(SECOND_UNIT, handle_tick);
 }
 
 /*
@@ -1755,9 +1603,6 @@ static void init()
   app_message_register_outbox_failed(outbox_failed_callback);
   app_message_register_outbox_sent(outbox_sent_callback);
 
-  // Open AppMessage
-  app_message_open(2000, 50);
-
   /*
  1 + (n * 7) + D1 + ... + Dn
  Where n is the number of Tuples in the Dictionary and Dx are the sizes of the values in the Tuples.
@@ -1767,6 +1612,7 @@ static void init()
 
 static void deinit()
 {
+
   accel_tap_service_unsubscribe();
   app_message_deregister_callbacks();
   layer_destroy(layer);
