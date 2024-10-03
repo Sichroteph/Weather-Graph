@@ -11,7 +11,7 @@ var currentCity;
 var current_Latitude;
 var current_Longitude;
 var current_Last_update;
-var current_dictionnary;
+var current_dictionary;
 
 var current_page = 0;
 var cityIndex = 0;
@@ -52,8 +52,8 @@ function runConfig() {
   //console.log("current_Longitude : " + current_Longitude);
   current_Last_update = jsonConfig.cities[cityIndex].lastUpdated;
   //console.log("current_Last_update : " + current_Last_update);
-  current_dictionnary = jsonConfig.cities[cityIndex].weatherDictionnary;
-  //console.log("current_dictionnary : " + current_dictionnary);
+  current_dictionary = jsonConfig.cities[cityIndex].weatherDictionary;
+  //console.log("current_dictionary : " + current_dictionary);
 
   if (jsonConfig.unit == "metric")
     bIsImperial = false;
@@ -81,9 +81,9 @@ function runConfig() {
       getForecast();
     }
   } else {
-    // Send cach"e dictionnary
-    //console.log("current_dictionnary\n" + current_dictionnary);
-    var dictionary = JSON.parse(current_dictionnary);
+    // Send cach"e dictionary
+    //console.log("current_dictionary\n" + current_dictionary);
+    var dictionary = JSON.parse(current_dictionary);
     Pebble.sendAppMessage(dictionary, function () {
       //console.log("success");
       SendStatus("END_TRANSMISSION");
@@ -95,13 +95,6 @@ function runConfig() {
     );
 
   }
-
-
-
-
-
-
-
 }
 
 function SendLocation(location) {
@@ -432,6 +425,10 @@ function getForecast() {
 
                   // temperatures
                   var temperature = Math.round(jsonWeather.properties.timeseries[i].data.instant.details.air_temperature);
+                  if (bIsImperial == 1) {
+                    temperature = celsiusToFahrenheit(temperature);
+                  }
+                  
                   hourlyTemperatures['hour' + i] = temperature;
 
                   // icons
@@ -773,14 +770,14 @@ function getForecast() {
               // console.log("sending data");
               // console.log("sendAppMessage");
 
-              // save dictionnary + last update time
+              // save dictionary + last update time
               var jsonConfig = JSON.parse(localStorage.getItem(KEY_CONFIG));
               //console.log(JSON.stringify(jsonConfig));
 
               var updateTime = new Date().toISOString();
 
               jsonConfig.cities[cityIndex].lastUpdated = updateTime;
-              jsonConfig.cities[cityIndex].weatherDictionnary = JSON.stringify(dictionary);
+              jsonConfig.cities[cityIndex].weatherDictionary = JSON.stringify(dictionary);
 
               localStorage.setItem(KEY_CONFIG, JSON.stringify(jsonConfig));
 
@@ -858,7 +855,7 @@ Pebble.addEventListener('ready',
       console.log("fake config mode");
       var testConfig = {
         "gps": true,
-        "unit": "metric",
+        "unit": "celcius",
         "cities": [
           {
             "cityName": "NEW YORK",
@@ -891,7 +888,7 @@ Pebble.addEventListener('ready',
 
       testConfig.cities.forEach(function (city) {
         city.lastUpdated = new Date(2020, 10, 15, 10, 30).toISOString();
-        city.weatherDictionnary = "";
+        city.weatherDictionary = "";
 
 
         //console.log(JSON.stringify(testConfig));
@@ -942,7 +939,7 @@ Pebble.addEventListener('webviewclosed', function (e) {
 
   configData.cities.forEach(function (city) {
     city.lastUpdated = new Date(2020, 10, 15, 10, 30).toISOString();
-    city.weatherDictionnary = "";
+    city.weatherDictionary = "";
   });
 
   localStorage.setItem(KEY_CONFIG, JSON.stringify(configData));
