@@ -1313,6 +1313,7 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
 
   else if (temp_tuple && graph_tuple && tmin_tuple && tmax_tuple && h1_tuple && h2_tuple && h3_tuple && wind1_tuple && wind2_tuple && wind3_tuple && temp1_tuple && temp1_tuple && temp2_tuple && temp3_tuple && temp4_tuple && temp5_tuple && icon1_tuple && icon2_tuple && icon3_tuple && rain1_tuple && rain2_tuple && rain3_tuple && rain4_tuple && temp6_tuple && temp7_tuple && temp8_tuple && temp9_tuple && h4_tuple && h5_tuple && h6_tuple && h7_tuple && rain5_tuple && rain6_tuple && rain7_tuple && rain8_tuple && icon4_tuple && icon5_tuple && icon6_tuple && icon7_tuple && wind4_tuple && wind5_tuple && wind6_tuple && wind7_tuple && day1_tuple && day2_tuple && day3_tuple && day1_icon_tuple && day2_icon_tuple && day3_icon_tuple && KEY_DAY1R && KEY_DAY2R && KEY_DAY3R && KEY_DAY4R && KEY_DAY5R && KEY_DAY6R)
   {
+    page_nb = 1;
     // If all data is available, use it
     graph = graph_tuple->value->int32;
     // APP_LOG(APP_LOG_LEVEL_DEBUG,"c++ graph %d", graph);
