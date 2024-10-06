@@ -521,7 +521,7 @@ function getForecast() {
               now.setHours(0, 0, 0, 0);
               //console.log(now);
 
-              var current_gap = 0;
+              var current_gap = -1;
               var tempMin;
               var tempMax;
               var nbDayOccurences;
@@ -534,15 +534,17 @@ function getForecast() {
                 var utcDate = new Date(utcTimeString);
                 var offsetMinutes2 = new Date().getTimezoneOffset();
                 var localTime = new Date(utcDate.getTime() - (offsetMinutes2 * 60000));
+               
                 nLocalHour = localTime.getHours();
 
                 localTime.setHours = (0, 0, 0, 0);
 
                 var j = calculateDaysBetweenDates(now, localTime);
-
-                if (j > 0) {
+          
+                if (j >= 0) {
                   if (j != current_gap) {
                     // day stats reset
+                    console.log(localTime);
                     current_gap = j;
                     tempMin = 1000;
                     tempMax = -1000;
@@ -552,7 +554,7 @@ function getForecast() {
                   }
 
                   nbDayOccurences++
-                  var dayIndex = j - 1;
+                  var dayIndex = j ;
                   daily_week_position['day' + dayIndex] = localTime.getDay();
 
                   var currentTemp = Math.round(jsonWeather.properties.timeseries[i].data.instant.details.air_temperature);
