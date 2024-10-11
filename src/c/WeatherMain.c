@@ -509,7 +509,7 @@ static void layer_update(Layer *me, GContext *ctx)
   if (!is_weather_aquired)
   {
 
-    GRect rect_location = {{0, is_cache_mode*0}, {WIDTH, 50}};
+    GRect rect_location = {{0, 0}, {WIDTH, 50}};
     graphics_draw_text(ctx, location, fonts_get_system_font(FONT_KEY_BITHAM_30_BLACK), rect_location, GTextOverflowModeWordWrap,
                        GTextAlignmentCenter, NULL);
 
@@ -1470,6 +1470,11 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
     persist_write_string(KEY_TMAX, tmax);
     persist_write_string(KEY_SUNRISE, sunrise);
     persist_write_string(KEY_SUNSET, sunset);
+
+    if (is_cache_mode == 0)
+    {
+      vibes_double_pulse();
+    }
   }
 }
 
