@@ -805,9 +805,10 @@ static void layer_update(Layer *me, GContext *ctx) {
       static char t1[20];
       static char t12[20];
       static char t2[20];
-      
-      // Ensure at least 2 degrees difference between min and max for distinct labels
-      // This guarantees 3 distinct vertical reference values (min, mid, max)
+
+      // Ensure at least 2 degrees difference between min and max for distinct
+      // labels This guarantees 3 distinct vertical reference values (min, mid,
+      // max)
       int display_max = ttmax;
       int display_min = ttmin;
       if (display_max - display_min < 2) {
