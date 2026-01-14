@@ -6,6 +6,7 @@ var KEY_CONFIG = 157;
 var KEY_LAST_UPDATE = 158;
 
 var bIsImperial;
+var windSpeedUnit;
 
 var currentCity;
 var current_Latitude;
@@ -59,6 +60,9 @@ function runConfig() {
     bIsImperial = 0;
   else
     bIsImperial = 1;
+
+  // Load wind speed unit preference
+  windSpeedUnit = localStorage.getItem('wind_speed_unit') || 'kmh';
 
   // Is a refresh needed ?
 
@@ -380,7 +384,7 @@ function getForecastMetNo() {
               else {
                 units_description = "metric";
                 units_temperature = "°C"
-                units_wind = " kmh";
+                units_wind = (windSpeedUnit === 'ms') ? " m/s" : " kmh";
               }
 
               var hourly_time = {
@@ -480,10 +484,17 @@ function getForecastMetNo() {
               var stringSunset = padStart2(hours, 2, '0') + ':' + padStart2(minutes, 2, '0');
               //console.log(stringSunrise);
 
-              var rWind = Math.round(jsonWeather.properties.timeseries[0].data.instant.details.wind_speed * 3.6); // m/s to km/h
+              var windSpeedMps = jsonWeather.properties.timeseries[0].data.instant.details.wind_speed;
+              var rWind;
               if (bIsImperial == 1) {
                 // mph conversion from m/s
-                rWind = convertMpsToMph(jsonWeather.properties.timeseries[0].data.instant.details.wind_speed);
+                rWind = convertMpsToMph(windSpeedMps);
+              } else if (windSpeedUnit === 'ms') {
+                // Keep in m/s
+                rWind = Math.round(windSpeedMps);
+              } else {
+                // Convert m/s to km/h
+                rWind = Math.round(windSpeedMps * 3.6);
               }
               var stringWindNow = rWind + units_wind;
               var sHumidity = Math.round(jsonWeather.properties.timeseries[0].data.instant.details.relative_humidity) + '%';
@@ -503,12 +514,18 @@ function getForecastMetNo() {
                   var localHour = localTime.getHours();
                   hourly_time['hour' + i] = localHour;
 
-                  // wind - convert m/s to km/h
+                  // wind - convert m/s to km/h or keep m/s
                   var windSpeedMps = jsonWeather.properties.timeseries[i].data.instant.details.wind_speed;
-                  var windSpeed = Math.round(windSpeedMps * 3.6); // m/s to km/h
+                  var windSpeed;
                   if (bIsImperial == 1) {
                     // mph conversion from m/s
                     windSpeed = convertMpsToMph(windSpeedMps);
+                  } else if (windSpeedUnit === 'ms') {
+                    // Keep in m/s
+                    windSpeed = Math.round(windSpeedMps);
+                  } else {
+                    // Convert m/s to km/h
+                    windSpeed = Math.round(windSpeedMps * 3.6);
                   }
                   hourlyWind['hour' + i] = windSpeed + "\n" + windBearing(jsonWeather.properties.timeseries[i].data.instant.details.wind_from_direction);
 
@@ -658,7 +675,15 @@ function getForecastMetNo() {
                     tempMax = currentTemp;
                   }
 
-                  var currentWind = Math.round(jsonWeather.properties.timeseries[i].data.instant.details.wind_speed);
+                  var currentWindMps = jsonWeather.properties.timeseries[i].data.instant.details.wind_speed;
+                  var currentWind;
+                  if (bIsImperial == 1) {
+                    currentWind = convertMpsToMph(currentWindMps);
+                  } else if (windSpeedUnit === 'ms') {
+                    currentWind = Math.round(currentWindMps);
+                  } else {
+                    currentWind = Math.round(currentWindMps * 3.6);
+                  }
                   if (currentWind > nMaxWind) {
                     nMaxWind = currentWind;
                     daily_wind['day' + dayIndex] = currentWind;
@@ -968,7 +993,7 @@ function processOpenMeteoResponse(responseWeather, responseSunrise, responseMoon
   } else {
     units_description = "metric";
     units_temperature = "°C";
-    units_wind = " kmh";
+    units_wind = (windSpeedUnit === 'ms') ? " m/s" : " kmh";
   }
 
   // ----------------------
@@ -992,10 +1017,17 @@ function processOpenMeteoResponse(responseWeather, responseSunrise, responseMoon
   var stringSunset = padStart2(hours, 2, '0') + ':' + padStart2(minutes, 2, '0');
 
   // Wind speed from Open-Meteo is already in km/h
-  var rWind = Math.round(hourly.wind_speed_10m[0]);
+  var windSpeedKmh = hourly.wind_speed_10m[0];
+  var rWind;
   if (bIsImperial == 1) {
     // Convert km/h to mph
-    rWind = Math.round(rWind * 0.621371);
+    rWind = Math.round(windSpeedKmh * 0.621371);
+  } else if (windSpeedUnit === 'ms') {
+    // Convert km/h to m/s
+    rWind = Math.round(windSpeedKmh / 3.6);
+  } else {
+    // Keep in km/h
+    rWind = Math.round(windSpeedKmh);
   }
   var stringWindNow = rWind + units_wind;
   var sHumidity = Math.round(hourly.relative_humidity_2m[0]) + '%';
@@ -1044,9 +1076,13 @@ function processOpenMeteoResponse(responseWeather, responseSunrise, responseMoon
 
       // Wind - already in km/h from API
       var windSpeedKmh = hourly.wind_speed_10m[apiIndex];
-      var windSpeed = Math.round(windSpeedKmh);
+      var windSpeed;
       if (bIsImperial == 1) {
         windSpeed = Math.round(windSpeedKmh * 0.621371); // km/h to mph
+      } else if (windSpeedUnit === 'ms') {
+        windSpeed = Math.round(windSpeedKmh / 3.6); // km/h to m/s
+      } else {
+        windSpeed = Math.round(windSpeedKmh); // keep km/h
       }
       hourlyWind['hour' + i] = windSpeed + "\n" + windBearing(hourly.wind_direction_10m[apiIndex]);
 
@@ -1105,9 +1141,14 @@ function processOpenMeteoResponse(responseWeather, responseSunrise, responseMoon
     daily_icon['day' + d] = wmoCodeToSymbolCode(daily.weather_code[d], false);
 
     // Wind - already in km/h from API
-    var dayWind = Math.round(daily.wind_speed_10m_max[d]);
+    var dayWindKmh = daily.wind_speed_10m_max[d];
+    var dayWind;
     if (bIsImperial == 1) {
-      dayWind = Math.round(daily.wind_speed_10m_max[d] * 0.621371); // km/h to mph
+      dayWind = Math.round(dayWindKmh * 0.621371); // km/h to mph
+    } else if (windSpeedUnit === 'ms') {
+      dayWind = Math.round(dayWindKmh / 3.6); // km/h to m/s
+    } else {
+      dayWind = Math.round(dayWindKmh); // keep km/h
     }
     daily_wind['day' + d] = dayWind;
 
@@ -1473,6 +1514,12 @@ Pebble.addEventListener('webviewclosed', function (e) {
   // Weather API selection (Open-Meteo or MET Norway)
   localStorage.setItem('weather_api', configData.weather_api);
   console.log("Weather API set to: " + configData.weather_api);
+
+  // Wind speed unit for metric mode (kmh or ms)
+  var wind_speed_unit = options.wind_speed_unit || 'kmh';
+  localStorage.setItem('wind_speed_unit', wind_speed_unit);
+  windSpeedUnit = wind_speed_unit;
+  console.log("Wind speed unit set to: " + wind_speed_unit);
 
   console.log('Configuration saved: ' + JSON.stringify(configData));
 
