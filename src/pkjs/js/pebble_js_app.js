@@ -20,7 +20,7 @@ var minutesBeforeRefresh = 30;
 
 function SendStatus(status) {
   var dictionary = {
-    "KEY_STATUS": status,
+    133: status,
   };
 
   // Send to watchapp
@@ -56,9 +56,9 @@ function runConfig() {
   //console.log("current_dictionary : " + current_dictionary);
 
   if (jsonConfig.unit == "metric")
-    bIsImperial = false;
+    bIsImperial = 0;
   else
-    bIsImperial = true;
+    bIsImperial = 1;
 
   // Is a refresh needed ?
 
@@ -99,7 +99,7 @@ function runConfig() {
 
 function SendLocation(location) {
   var dictionary = {
-    "KEY_LOCATION": location,
+    32: location,
   };
 
 
@@ -159,6 +159,79 @@ function celsiusToFahrenheit(celsius) {
   return Math.round((celsius * 9 / 5) + 32);
 }
 
+// WMO Weather Code to MET Norway symbol_code mapping
+// WMO codes: https://open-meteo.com/en/docs (weather_code field)
+// Maps to MET Norway icon names for compatibility with existing build_icon() in C
+function wmoCodeToSymbolCode(wmoCode, isNight) {
+  var dayNight = isNight ? '_night' : '_day';
+
+  switch (wmoCode) {
+    case 0:  // Clear sky
+      return 'clearsky' + dayNight;
+    case 1:  // Mainly clear
+      return 'fair' + dayNight;
+    case 2:  // Partly cloudy
+      return 'partlycloudy' + dayNight;
+    case 3:  // Overcast
+      return 'cloudy';
+    case 45: // Fog
+    case 48: // Depositing rime fog
+      return 'fog';
+    case 51: // Drizzle: Light
+      return 'lightrain';
+    case 53: // Drizzle: Moderate
+      return 'rain';
+    case 55: // Drizzle: Dense
+      return 'rain';
+    case 56: // Freezing Drizzle: Light
+      return 'sleet';
+    case 57: // Freezing Drizzle: Dense
+      return 'sleet';
+    case 61: // Rain: Slight
+      return 'lightrainshowers' + dayNight;
+    case 63: // Rain: Moderate
+      return 'rain';
+    case 65: // Rain: Heavy
+      return 'heavyrain';
+    case 66: // Freezing Rain: Light
+      return 'sleet';
+    case 67: // Freezing Rain: Heavy
+      return 'heavysleet';
+    case 71: // Snow fall: Slight
+      return 'lightsnow';
+    case 73: // Snow fall: Moderate
+      return 'snow';
+    case 75: // Snow fall: Heavy
+      return 'heavysnow';
+    case 77: // Snow grains
+      return 'snow';
+    case 80: // Rain showers: Slight
+      return 'lightrainshowers' + dayNight;
+    case 81: // Rain showers: Moderate
+      return 'rainshowers' + dayNight;
+    case 82: // Rain showers: Violent
+      return 'heavyrainshowers' + dayNight;
+    case 85: // Snow showers: Slight
+      return 'lightsnowshowers' + dayNight;
+    case 86: // Snow showers: Heavy
+      return 'heavysnowshowers' + dayNight;
+    case 95: // Thunderstorm: Slight or moderate
+      return 'rainandthunder';
+    case 96: // Thunderstorm with slight hail
+      return 'rainandthunder';
+    case 99: // Thunderstorm with heavy hail
+      return 'heavyrainandthunder';
+    default:
+      return 'partlycloudy' + dayNight;
+  }
+}
+
+// Check if current hour is night time (between sunset and sunrise)
+function isNightTime(hour) {
+  // Approximate: night is between 21:00 and 6:00
+  return hour >= 21 || hour < 6;
+}
+
 function calculateDaysBetweenDates(date1, date2) {
   var d1 = new Date(date1);
   var d2 = new Date(date2);
@@ -190,6 +263,21 @@ function attendre(ms, callback) {
 
 function getForecast() {
   console.log("getForecast");
+
+  // Check which API to use (default to Open-Meteo with AROME model for France)
+  var weatherApi = localStorage.getItem('weather_api') || 'openmeteo';
+  console.log("Using weather API: " + weatherApi);
+
+  if (weatherApi === 'openmeteo') {
+    getForecastOpenMeteo();
+  } else {
+    getForecastMetNo();
+  }
+}
+
+
+function getForecastMetNo() {
+  console.log("getForecastMetNo");
 
   SendStatus("OK\nGetting forecast ...");
 
@@ -428,7 +516,7 @@ function getForecast() {
                   if (bIsImperial == 1) {
                     temperature = celsiusToFahrenheit(temperature);
                   }
-                  
+
                   hourlyTemperatures['hour' + i] = temperature;
 
                   // icons
@@ -534,13 +622,13 @@ function getForecast() {
                 var utcDate = new Date(utcTimeString);
                 var offsetMinutes2 = new Date().getTimezoneOffset();
                 var localTime = new Date(utcDate.getTime() - (offsetMinutes2 * 60000));
-               
+
                 nLocalHour = localTime.getHours();
 
                 localTime.setHours = (0, 0, 0, 0);
 
                 var j = calculateDaysBetweenDates(now, localTime);
-          
+
                 if (j >= 0) {
                   if (j != current_gap) {
                     // day stats reset
@@ -554,7 +642,7 @@ function getForecast() {
                   }
 
                   nbDayOccurences++
-                  var dayIndex = j ;
+                  var dayIndex = j;
                   daily_week_position['day' + dayIndex] = localTime.getDay();
 
                   var currentTemp = Math.round(jsonWeather.properties.timeseries[i].data.instant.details.air_temperature);
@@ -647,125 +735,125 @@ function getForecast() {
 
 
               var dictionary = {
-                "KEY_TEMPERATURE": stringTemperatureNow,
-                "KEY_CONDITIONS": 0,
-                "KEY_GRAPH": 0,
-                "KEY_WIND_SPEED": stringWindNow,
-                "KEY_SUNRISE": stringSunrise,
-                "KEY_SUNSET": stringSunset,
-                "KEY_TMIN": nTodayTempMin + units_temperature,
-                "KEY_TMAX": nTodayTempMax + units_temperature,
-                "KEY_ICON": hourly_icons['hour0'],
-                "KEY_FORECAST_TEMP1": hourlyTemperatures['hour0'],
-                "KEY_FORECAST_TEMP2": hourlyTemperatures['hour3'],
-                "KEY_FORECAST_TEMP3": hourlyTemperatures['hour6'],
-                "KEY_FORECAST_TEMP4": hourlyTemperatures['hour9'],
-                "KEY_FORECAST_TEMP5": hourlyTemperatures['hour12'],
-                "KEY_FORECAST_TEMP6": hourlyTemperatures['hour15'],
-                "KEY_FORECAST_TEMP7": hourlyTemperatures['hour18'],
-                "KEY_FORECAST_TEMP8": hourlyTemperatures['hour21'],
-                "KEY_FORECAST_TEMP9": hourlyTemperatures['hour24'],
-                "KEY_FORECAST_H0": hourly_time['hour0'],
-                "KEY_FORECAST_H1": hourly_time['hour3'],
-                "KEY_FORECAST_H2": hourly_time['hour6'],
-                "KEY_FORECAST_H3": hourly_time['hour9'],
-                "KEY_FORECAST_H4": hourly_time['hour12'],
-                "KEY_FORECAST_H5": hourly_time['hour15'],
-                "KEY_FORECAST_H6": hourly_time['hour18'],
-                "KEY_FORECAST_H7": hourly_time['hour21'],
-                "KEY_FORECAST_H8": hourly_time['hour24'],
+                0: stringTemperatureNow,
+                1: 0,
+                104: 0,
+                3: stringWindNow,
+                6: stringSunrise,
+                7: stringSunset,
+                8: nTodayTempMin + units_temperature,
+                9: nTodayTempMax + units_temperature,
+                10: hourly_icons['hour0'],
+                11: hourlyTemperatures['hour0'],
+                12: hourlyTemperatures['hour3'],
+                13: hourlyTemperatures['hour6'],
+                14: hourlyTemperatures['hour9'],
+                15: hourlyTemperatures['hour12'],
+                55: hourlyTemperatures['hour15'],
+                56: hourlyTemperatures['hour18'],
+                72: hourlyTemperatures['hour21'],
+                73: hourlyTemperatures['hour24'],
+                111: hourly_time['hour0'],
+                16: hourly_time['hour3'],
+                17: hourly_time['hour6'],
+                18: hourly_time['hour9'],
+                57: hourly_time['hour12'],
+                58: hourly_time['hour15'],
+                59: hourly_time['hour18'],
+                60: hourly_time['hour21'],
+                112: hourly_time['hour24'],
 
-                "KEY_FORECAST_RAIN1": hourlyRain['hour0'],
-                "KEY_FORECAST_RAIN11": hourlyRain['hour1'],
-                "KEY_FORECAST_RAIN12": hourlyRain['hour2'],
+                21: hourlyRain['hour0'],
+                80: hourlyRain['hour1'],
+                81: hourlyRain['hour2'],
 
-                "KEY_FORECAST_RAIN2": hourlyRain['hour3'],
-                "KEY_FORECAST_RAIN21": hourlyRain['hour4'],
-                "KEY_FORECAST_RAIN22": hourlyRain['hour5'],
+                22: hourlyRain['hour3'],
+                82: hourlyRain['hour4'],
+                83: hourlyRain['hour5'],
 
-                "KEY_FORECAST_RAIN3": hourlyRain['hour6'],
-                "KEY_FORECAST_RAIN31": hourlyRain['hour7'],
-                "KEY_FORECAST_RAIN32": hourlyRain['hour8'],
+                23: hourlyRain['hour6'],
+                84: hourlyRain['hour7'],
+                85: hourlyRain['hour8'],
 
-                "KEY_FORECAST_RAIN4": hourlyRain['hour9'],
-                "KEY_FORECAST_RAIN41": hourlyRain['hour10'],
-                "KEY_FORECAST_RAIN42": hourlyRain['hour11'],
+                24: hourlyRain['hour9'],
+                86: hourlyRain['hour10'],
+                87: hourlyRain['hour11'],
 
-                "KEY_FORECAST_RAIN5": hourlyRain['hour12'],
-                "KEY_FORECAST_RAIN51": hourlyRain['hour13'],
-                "KEY_FORECAST_RAIN52": hourlyRain['hour14'],
+                25: hourlyRain['hour12'],
+                88: hourlyRain['hour13'],
+                89: hourlyRain['hour14'],
 
-                "KEY_FORECAST_RAIN6": hourlyRain['hour15'],
-                "KEY_FORECAST_RAIN61": hourlyRain['hour16'],
-                "KEY_FORECAST_RAIN62": hourlyRain['hour17'],
+                61: hourlyRain['hour15'],
+                90: hourlyRain['hour16'],
+                91: hourlyRain['hour17'],
 
-                "KEY_FORECAST_RAIN7": hourlyRain['hour18'],
-                "KEY_FORECAST_RAIN71": hourlyRain['hour19'],
-                "KEY_FORECAST_RAIN72": hourlyRain['hour20'],
+                62: hourlyRain['hour18'],
+                92: hourlyRain['hour19'],
+                93: hourlyRain['hour20'],
 
-                "KEY_FORECAST_RAIN8": hourlyRain['hour21'],
-                "KEY_FORECAST_RAIN81": hourlyRain['hour22'],
-                "KEY_FORECAST_RAIN82": hourlyRain['hour23'],
+                63: hourlyRain['hour21'],
+                94: hourlyRain['hour22'],
+                95: hourlyRain['hour23'],
 
-                "KEY_FORECAST_ICON1": hourly_icons['hour3'],
-                "KEY_FORECAST_ICON2": hourly_icons['hour6'],
-                "KEY_FORECAST_ICON3": hourly_icons['hour9'],
-                "KEY_FORECAST_ICON4": hourly_icons['hour12'],
-                "KEY_FORECAST_ICON5": hourly_icons['hour15'],
-                "KEY_FORECAST_ICON6": hourly_icons['hour18'],
-                "KEY_FORECAST_ICON7": hourly_icons['hour24'],
+                26: hourly_icons['hour3'],
+                27: hourly_icons['hour6'],
+                28: hourly_icons['hour9'],
+                64: hourly_icons['hour12'],
+                65: hourly_icons['hour15'],
+                66: hourly_icons['hour18'],
+                67: hourly_icons['hour24'],
 
-                "KEY_FORECAST_WIND0": hourlyWind['hour0'],
-                "KEY_FORECAST_WIND1": hourlyWind['hour3'],
-                "KEY_FORECAST_WIND2": hourlyWind['hour6'],
-                "KEY_FORECAST_WIND3": hourlyWind['hour9'],
-                "KEY_FORECAST_WIND4": hourlyWind['hour12'],
-                "KEY_FORECAST_WIND5": hourlyWind['hour15'],
-                "KEY_FORECAST_WIND6": hourlyWind['hour18'],
-                "KEY_FORECAST_WIND7": hourlyWind['hour21'],
-                "KEY_FORECAST_WIND8": hourlyWind['hour24'],
+                113: hourlyWind['hour0'],
+                29: hourlyWind['hour3'],
+                30: hourlyWind['hour6'],
+                31: hourlyWind['hour9'],
+                68: hourlyWind['hour12'],
+                69: hourlyWind['hour15'],
+                70: hourlyWind['hour18'],
+                71: hourlyWind['hour21'],
+                114: hourlyWind['hour24'],
 
-                "KEY_DAY1": daily_week_position['day0'],
-                "KEY_DAY2": daily_week_position['day1'],
-                "KEY_DAY3": daily_week_position['day2'],
-                "KEY_DAY4": daily_week_position['day3'],
-                "KEY_DAY5": daily_week_position['day4'],
-                "KEY_DAY6": daily_week_position['day5'],
-                "KEY_DAY1_TEMP": daily_temperature['day0'],
-                "KEY_DAY2_TEMP": daily_temperature['day1'],
-                "KEY_DAY3_TEMP": daily_temperature['day2'],
-                "KEY_DAY4_TEMP": daily_temperature['day3'],
-                "KEY_DAY5_TEMP": daily_temperature['day4'],
-                "KEY_DAY6_TEMP": daily_temperature['day5'],
-                "KEY_DAY1_ICON": daily_icon['day0'],
-                "KEY_DAY2_ICON": daily_icon['day1'],
-                "KEY_DAY3_ICON": daily_icon['day2'],
-                "KEY_DAY4_ICON": daily_icon['day3'],
-                "KEY_DAY5_ICON": daily_icon['day4'],
-                "KEY_DAY6_ICON": daily_icon['day5'],
+                74: daily_week_position['day0'],
+                75: daily_week_position['day1'],
+                76: daily_week_position['day2'],
+                96: daily_week_position['day3'],
+                97: daily_week_position['day4'],
+                98: daily_week_position['day5'],
+                105: daily_temperature['day0'],
+                106: daily_temperature['day1'],
+                107: daily_temperature['day2'],
+                108: daily_temperature['day3'],
+                109: daily_temperature['day4'],
+                110: daily_temperature['day5'],
+                77: daily_icon['day0'],
+                78: daily_icon['day1'],
+                79: daily_icon['day2'],
+                99: daily_icon['day3'],
+                102: daily_icon['day4'],
+                103: daily_icon['day5'],
 
-                "KEY_MOONPHASE1": daily_moon_phases['day0'],
-                "KEY_MOONPHASE2": daily_moon_phases['day1'],
-                "KEY_MOONPHASE3": daily_moon_phases['day2'],
-                "KEY_MOONPHASE4": daily_moon_phases['day3'],
-                "KEY_MOONPHASE5": daily_moon_phases['day4'],
-                "KEY_MOONPHASE6": daily_moon_phases['day5'],
+                115: daily_moon_phases['day0'],
+                116: daily_moon_phases['day1'],
+                117: daily_moon_phases['day2'],
+                118: daily_moon_phases['day3'],
+                119: daily_moon_phases['day4'],
+                120: daily_moon_phases['day5'],
 
-                "KEY_DAY1R": daily_rain['day0'],
-                "KEY_DAY2R": daily_rain['day1'],
-                "KEY_DAY3R": daily_rain['day2'],
-                "KEY_DAY4R": daily_rain['day3'],
-                "KEY_DAY5R": daily_rain['day4'],
-                "KEY_DAY6R": daily_rain['day5'],
+                121: daily_rain['day0'],
+                122: daily_rain['day1'],
+                123: daily_rain['day2'],
+                124: daily_rain['day3'],
+                125: daily_rain['day4'],
+                126: daily_rain['day5'],
 
-                "KEY_DAY1P": daily_wind['day0'],
-                "KEY_DAY2P": daily_wind['day1'],
-                "KEY_DAY3P": daily_wind['day2'],
-                "KEY_DAY4P": daily_wind['day3'],
-                "KEY_DAY5P": daily_wind['day4'],
-                "KEY_DAY6P": daily_wind['day5'],
+                127: daily_wind['day0'],
+                128: daily_wind['day1'],
+                129: daily_wind['day2'],
+                130: daily_wind['day3'],
+                131: daily_wind['day4'],
+                132: daily_wind['day5'],
 
-                "KEY_HUMIDITY": sHumidity
+                5: sHumidity
               };
 
               SendStatus(" OK\nReceiving data");
@@ -801,6 +889,380 @@ function getForecast() {
   );
 }
 
+
+// Open-Meteo API with Météo-France AROME model (1.5km resolution, excellent for France)
+function getForecastOpenMeteo() {
+  console.log("getForecastOpenMeteo");
+
+  SendStatus("OK\nGetting forecast ...");
+
+  var now = new Date();
+
+  // Obtenir l'offset en minutes (négatif si la timezone est en avance sur UTC)
+  var offsetMinutes = now.getTimezoneOffset();
+  // Convertir l'offset en heures et minutes
+  var offsetHours = Math.floor(Math.abs(offsetMinutes) / 60);
+  var offsetRemainingMinutes = Math.abs(offsetMinutes) % 60;
+
+  // Ajouter le signe + ou -
+  var sign = offsetMinutes <= 0 ? "+" : "-";
+
+  // Formater en HH:MM avec le zéro devant si nécessaire
+  var formattedOffset = sign + padStart2(offsetHours, 2, '0') + ":" + padStart2(offsetRemainingMinutes, 2, '0');
+
+  var coordinates = 'lat=' + current_Latitude + '&lon=' + current_Longitude;
+
+  // Open-Meteo API with Météo-France AROME model
+  var urlOpenMeteo = 'https://api.open-meteo.com/v1/meteofrance?' +
+    'latitude=' + current_Latitude + '&longitude=' + current_Longitude +
+    '&hourly=temperature_2m,relative_humidity_2m,precipitation,weather_code,wind_speed_10m,wind_direction_10m' +
+    '&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum,wind_speed_10m_max' +
+    '&forecast_days=7&timezone=auto';
+
+  // Still need MET Norway for sunrise/sunset/moon data
+  var urlSunriseRequest = 'https://api.met.no/weatherapi/sunrise/3.0/sun?' + coordinates + '&offset=' + formattedOffset;
+  var urlMoonRequest = 'https://api.met.no/weatherapi/sunrise/3.0/moon?' + coordinates + '&offset=' + formattedOffset;
+
+  console.log(urlOpenMeteo);
+  console.log(urlSunriseRequest);
+  console.log(urlMoonRequest);
+
+  xhrRequest(urlOpenMeteo, 'GET',
+    function (responseWeather) {
+      xhrRequest(urlSunriseRequest, 'GET',
+        function (responseSunrise) {
+          xhrRequest(urlMoonRequest, 'GET',
+            function (responseMoon) {
+              processOpenMeteoResponse(responseWeather, responseSunrise, responseMoon);
+            }
+          );
+        }
+      );
+    }
+  );
+}
+
+
+// Process Open-Meteo API response and convert to the same dictionary format as MET Norway
+function processOpenMeteoResponse(responseWeather, responseSunrise, responseMoon) {
+  console.log("processOpenMeteoResponse");
+
+  var jsonWeather = JSON.parse(responseWeather);
+  var jsonSunrise = JSON.parse(responseSunrise);
+  var jsonMoon = JSON.parse(responseMoon);
+
+  SendStatus(" OK\nProcessing data ...");
+
+  var hourly = jsonWeather.hourly;
+  var daily = jsonWeather.daily;
+
+  var units_description;
+  var units_temperature;
+  var units_wind;
+
+  if (bIsImperial == 1) {
+    units_description = "imperial";
+    units_temperature = "°F";
+    units_wind = " m/h";
+  } else {
+    units_description = "metric";
+    units_temperature = "°C";
+    units_wind = " m/s";
+  }
+
+  // ----------------------
+  // Today panel
+  var rTemperature = Math.round(hourly.temperature_2m[0]);
+  if (bIsImperial == 1) {
+    rTemperature = celsiusToFahrenheit(rTemperature);
+  }
+  var stringTemperatureNow = rTemperature + units_temperature;
+
+  var sDateSunrise = jsonSunrise.properties.sunrise.time;
+  var dDateSunrise = new Date(sDateSunrise);
+  var hours = dDateSunrise.getHours();
+  var minutes = dDateSunrise.getMinutes();
+  var stringSunrise = padStart2(hours, 2, '0') + ':' + padStart2(minutes, 2, '0');
+
+  var sDateSunset = jsonSunrise.properties.sunset.time;
+  var dDateSunset = new Date(sDateSunset);
+  hours = dDateSunset.getHours();
+  minutes = dDateSunset.getMinutes();
+  var stringSunset = padStart2(hours, 2, '0') + ':' + padStart2(minutes, 2, '0');
+
+  // Wind speed from Open-Meteo is in km/h, convert to m/s first for consistency
+  var rWind = Math.round(hourly.wind_speed_10m[0] / 3.6); // km/h to m/s
+  if (bIsImperial == 1) {
+    // mph conversion
+    rWind = convertMpsToMph(rWind);
+  }
+  var stringWindNow = rWind + units_wind;
+  var sHumidity = Math.round(hourly.relative_humidity_2m[0]) + '%';
+
+  // ----------------------
+  // Hourly graph
+  var hourly_time = {
+    hour0: 0, hour3: 0, hour6: 0, hour9: 0, hour12: 0, hour15: 0, hour18: 0, hour21: 0, hour24: 0
+  };
+
+  var hourlyWind = {
+    hour0: 0, hour3: 0, hour6: 0, hour9: 0, hour12: 0, hour15: 0, hour18: 0, hour21: 0, hour24: 0
+  };
+
+  var hourlyTemperatures = {
+    hour0: 0, hour3: 0, hour6: 0, hour9: 0, hour12: 0, hour15: 0, hour18: 0, hour21: 0, hour24: 0
+  };
+
+  var hourly_icons = {
+    hour0: 0, hour3: 0, hour6: 0, hour9: 0, hour12: 0, hour15: 0, hour18: 0, hour21: 0, hour24: 0
+  };
+
+  var hourlyRain = {
+    hour0: 0, hour1: 0, hour2: 0, hour3: 0, hour4: 0, hour5: 0, hour6: 0, hour7: 0, hour8: 0,
+    hour9: 0, hour10: 0, hour11: 0, hour12: 0, hour13: 0, hour14: 0, hour15: 0, hour16: 0,
+    hour17: 0, hour18: 0, hour19: 0, hour20: 0, hour21: 0, hour22: 0, hour23: 0, hour24: 0
+  };
+
+  var nTodayTempMin = 1000;
+  var nTodayTempMax = -1000;
+
+  for (var i = 0; i <= 24 && i < hourly.time.length; i++) {
+    if ((i % 3) === 0) {
+      // 3 hours resolution
+      var utcTimeString = hourly.time[i];
+      var utcDate = new Date(utcTimeString);
+      var offsetMinutes2 = new Date().getTimezoneOffset();
+      var localTime = new Date(utcDate.getTime() - (offsetMinutes2 * 60000));
+      var localHour = localTime.getHours();
+      hourly_time['hour' + i] = localHour;
+
+      // Wind
+      var windSpeedKmh = hourly.wind_speed_10m[i];
+      var windSpeed = Math.round(windSpeedKmh / 3.6); // km/h to m/s
+      if (bIsImperial == 1) {
+        windSpeed = convertMpsToMph(windSpeed);
+      }
+      hourlyWind['hour' + i] = windSpeed + "\n" + windBearing(hourly.wind_direction_10m[i]);
+
+      // Temperatures
+      var temperature = Math.round(hourly.temperature_2m[i]);
+      if (bIsImperial == 1) {
+        temperature = celsiusToFahrenheit(temperature);
+      }
+      hourlyTemperatures['hour' + i] = temperature;
+
+      // Icons - convert WMO code to MET Norway symbol
+      var hourIsNight = isNightTime(localHour);
+      hourly_icons['hour' + i] = wmoCodeToSymbolCode(hourly.weather_code[i], hourIsNight);
+    }
+
+    // 1 hour resolution - Rain precipitation
+    hourlyRain['hour' + i] = Math.round((hourly.precipitation[i] || 0) * 20);
+
+    var temp = Math.round(hourly.temperature_2m[i]);
+    if (temp < nTodayTempMin) {
+      nTodayTempMin = temp;
+    }
+    if (temp > nTodayTempMax) {
+      nTodayTempMax = temp;
+    }
+  }
+
+  if (bIsImperial == 1) {
+    nTodayTempMax = celsiusToFahrenheit(nTodayTempMax);
+    nTodayTempMin = celsiusToFahrenheit(nTodayTempMin);
+  }
+
+  // -------------------
+  // Daily panels
+  var daily_moon_phases = { day0: 0, day1: 0, day2: 0, day3: 0, day4: 0, day5: 0 };
+  var daily_week_position = { day0: 0, day1: 0, day2: 0, day3: 0, day4: 0, day5: 0 };
+  var daily_temperature = { day0: 0, day1: 0, day2: 0, day3: 0, day4: 0, day5: 0 };
+  var daily_icon = { day0: 0, day1: 0, day2: 0, day3: 0, day4: 0, day5: 0 };
+  var daily_wind = { day0: 0, day1: 0, day2: 0, day3: 0, day4: 0, day5: 0 };
+  var daily_rain = { day0: 0, day1: 0, day2: 0, day3: 0, day4: 0, day5: 0 };
+
+  // Process daily data from Open-Meteo
+  for (var d = 0; d < 6 && d < daily.time.length; d++) {
+    var dayDate = new Date(daily.time[d]);
+    daily_week_position['day' + d] = dayDate.getDay();
+
+    var tempMax = Math.round(daily.temperature_2m_max[d]);
+    var tempMin = Math.round(daily.temperature_2m_min[d]);
+    if (bIsImperial == 1) {
+      tempMax = celsiusToFahrenheit(tempMax);
+      tempMin = celsiusToFahrenheit(tempMin);
+    }
+    daily_temperature['day' + d] = tempMax + units_temperature + '\n' + tempMin + units_temperature;
+
+    // Icon - convert WMO code (daytime)
+    daily_icon['day' + d] = wmoCodeToSymbolCode(daily.weather_code[d], false);
+
+    // Wind (km/h to m/s)
+    var dayWind = Math.round(daily.wind_speed_10m_max[d] / 3.6);
+    if (bIsImperial == 1) {
+      dayWind = convertMpsToMph(dayWind);
+    }
+    daily_wind['day' + d] = dayWind;
+
+    // Rain (mm to pixels, max 23)
+    var dayRain = Math.round(daily.precipitation_sum[d] * 2);
+    if (dayRain > 23) {
+      dayRain = 23;
+    }
+    daily_rain['day' + d] = dayRain;
+  }
+
+  // Moon phases
+  var initialMoon = jsonMoon.properties.moonphase;
+  daily_moon_phases['day0'] = Math.round(initialMoon / 365 * 25);
+
+  var moonIncrement = 360 / 29;
+  for (var m = 1; m < 6; m++) {
+    initialMoon = (initialMoon + moonIncrement) % 360;
+    daily_moon_phases['day' + m] = Math.round(initialMoon / 365 * 25);
+  }
+
+  var dictionary = {
+    0: stringTemperatureNow,
+    1: 0,
+    104: 0,
+    3: stringWindNow,
+    6: stringSunrise,
+    7: stringSunset,
+    8: nTodayTempMin + units_temperature,
+    9: nTodayTempMax + units_temperature,
+    10: hourly_icons['hour0'],
+    11: hourlyTemperatures['hour0'],
+    12: hourlyTemperatures['hour3'],
+    13: hourlyTemperatures['hour6'],
+    14: hourlyTemperatures['hour9'],
+    15: hourlyTemperatures['hour12'],
+    55: hourlyTemperatures['hour15'],
+    56: hourlyTemperatures['hour18'],
+    72: hourlyTemperatures['hour21'],
+    73: hourlyTemperatures['hour24'],
+    111: hourly_time['hour0'],
+    16: hourly_time['hour3'],
+    17: hourly_time['hour6'],
+    18: hourly_time['hour9'],
+    57: hourly_time['hour12'],
+    58: hourly_time['hour15'],
+    59: hourly_time['hour18'],
+    60: hourly_time['hour21'],
+    112: hourly_time['hour24'],
+
+    21: hourlyRain['hour0'],
+    80: hourlyRain['hour1'],
+    81: hourlyRain['hour2'],
+
+    22: hourlyRain['hour3'],
+    82: hourlyRain['hour4'],
+    83: hourlyRain['hour5'],
+
+    23: hourlyRain['hour6'],
+    84: hourlyRain['hour7'],
+    85: hourlyRain['hour8'],
+
+    24: hourlyRain['hour9'],
+    86: hourlyRain['hour10'],
+    87: hourlyRain['hour11'],
+
+    25: hourlyRain['hour12'],
+    88: hourlyRain['hour13'],
+    89: hourlyRain['hour14'],
+
+    61: hourlyRain['hour15'],
+    90: hourlyRain['hour16'],
+    91: hourlyRain['hour17'],
+
+    62: hourlyRain['hour18'],
+    92: hourlyRain['hour19'],
+    93: hourlyRain['hour20'],
+
+    63: hourlyRain['hour21'],
+    94: hourlyRain['hour22'],
+    95: hourlyRain['hour23'],
+
+    26: hourly_icons['hour3'],
+    27: hourly_icons['hour6'],
+    28: hourly_icons['hour9'],
+    64: hourly_icons['hour12'],
+    65: hourly_icons['hour15'],
+    66: hourly_icons['hour18'],
+    67: hourly_icons['hour24'],
+
+    113: hourlyWind['hour0'],
+    29: hourlyWind['hour3'],
+    30: hourlyWind['hour6'],
+    31: hourlyWind['hour9'],
+    68: hourlyWind['hour12'],
+    69: hourlyWind['hour15'],
+    70: hourlyWind['hour18'],
+    71: hourlyWind['hour21'],
+    114: hourlyWind['hour24'],
+
+    74: daily_week_position['day0'],
+    75: daily_week_position['day1'],
+    76: daily_week_position['day2'],
+    96: daily_week_position['day3'],
+    97: daily_week_position['day4'],
+    98: daily_week_position['day5'],
+    105: daily_temperature['day0'],
+    106: daily_temperature['day1'],
+    107: daily_temperature['day2'],
+    108: daily_temperature['day3'],
+    109: daily_temperature['day4'],
+    110: daily_temperature['day5'],
+    77: daily_icon['day0'],
+    78: daily_icon['day1'],
+    79: daily_icon['day2'],
+    99: daily_icon['day3'],
+    102: daily_icon['day4'],
+    103: daily_icon['day5'],
+
+    115: daily_moon_phases['day0'],
+    116: daily_moon_phases['day1'],
+    117: daily_moon_phases['day2'],
+    118: daily_moon_phases['day3'],
+    119: daily_moon_phases['day4'],
+    120: daily_moon_phases['day5'],
+
+    121: daily_rain['day0'],
+    122: daily_rain['day1'],
+    123: daily_rain['day2'],
+    124: daily_rain['day3'],
+    125: daily_rain['day4'],
+    126: daily_rain['day5'],
+
+    127: daily_wind['day0'],
+    128: daily_wind['day1'],
+    129: daily_wind['day2'],
+    130: daily_wind['day3'],
+    131: daily_wind['day4'],
+    132: daily_wind['day5'],
+
+    5: sHumidity
+  };
+
+  SendStatus(" OK\nReceiving data");
+
+  // save dictionary + last update time
+  var jsonConfig = JSON.parse(localStorage.getItem(KEY_CONFIG));
+  var updateTime = new Date().toISOString();
+
+  jsonConfig.cities[cityIndex].lastUpdated = updateTime;
+  jsonConfig.cities[cityIndex].weatherDictionary = JSON.stringify(dictionary);
+
+  localStorage.setItem(KEY_CONFIG, JSON.stringify(jsonConfig));
+
+  Pebble.sendAppMessage(dictionary, function () {
+    SendStatus("END_TRANSMISSION");
+  }, function () {
+    console.log('Send failed!');
+    SendStatus(" FAILED\n");
+  });
+}
 
 
 function locationSuccess(pos) {
@@ -853,7 +1315,7 @@ Pebble.addEventListener('ready',
     //localStorage.setItem(KEY_LAST_UPDATE, JSON.stringify(maintenant));
     // config reset in test mode
 
-    if ((testMode == 1)||(JSON.parse(localStorage.getItem(KEY_CONFIG) === null))){
+    if ((testMode == 1) || (JSON.parse(localStorage.getItem(KEY_CONFIG) === null))) {
       console.log("fake config mode");
       var testConfig = {
         "gps": true,
@@ -907,49 +1369,105 @@ Pebble.addEventListener('ready',
 Pebble.addEventListener('appmessage',
   function (e) {
     console.log("AppMessage received");
-   
+
     runConfig();
     current_page++;
-  
+
   });
 
 
 Pebble.addEventListener('showConfiguration', function () {
-  var url = 'http://sichroteph.github.io/Weather-Graph-ForecastIO/index2.html';
+  var url = 'https://sichroteph.github.io/Weather-Graph';
 
   //console.// ('Showing configuration page: ' + url);
   Pebble.openURL(url);
 });
 
 Pebble.addEventListener('webviewclosed', function (e) {
-
-  var rawConfig = decodeURIComponent(e.response);
-
-  var configData = JSON.parse(rawConfig);
-
-  var is_gps = configData.gps;
-
-  if (is_gps == true) {
-    var newEntry = {
-      "cityName": "GPS",
-      "latitude": "0",
-      "longitude": ""
-    };
-
-    configData.cities.unshift(newEntry);
+  // Check if e.response exists and is not empty
+  if (!e.response || e.response === 'CANCELLED') {
+    console.log('Configuration cancelled or empty');
+    return;
   }
 
-  configData.cities.forEach(function (city) {
-    city.lastUpdated = new Date(2020, 10, 15, 10, 30).toISOString();
-    city.weatherDictionary = "";
-  });
+  var rawConfig = decodeURIComponent(e.response);
+  console.log('Raw config received: ' + rawConfig);
+
+  var options = JSON.parse(rawConfig);
+  console.log('Parsed options: ' + JSON.stringify(options));
+
+  // Transform options from config page to expected format
+  var configData = {
+    gps: options.gps || false,
+    unit: options.radio_units ? 'imperial' : 'metric',  // radio_units checked = imperial
+    utc: options.select_utc || '1',
+    refresh: options.radio_refresh ? '30' : '60',  // radio_refresh checked = 30mn
+    vibration: options.toggle_vibration || false,
+    bw_icons: options.toggle_bw_icons || false,
+    weather_api: options.weather_api || 'openmeteo',
+    color_right_back: options.color_right_back || '#000000',
+    color_left_back: options.color_left_back || '#000000',
+    color_hours: options.color_hours || '#FFFFFF',
+    color_ruler: options.color_ruler || '#FFFFFF',
+    color_temperatures: options.color_temperatures || '#FFFFFF',
+    cities: []
+  };
+
+  // Add city from input
+  if (options.input_city && options.input_city.trim() !== '') {
+    configData.cities.push({
+      cityName: options.input_city.trim(),
+      latitude: '',
+      longitude: '',
+      lastUpdated: new Date(2020, 10, 15, 10, 30).toISOString(),
+      weatherDictionary: ''
+    });
+  }
+
+  // Add GPS entry if enabled
+  if (configData.gps) {
+    configData.cities.unshift({
+      cityName: 'GPS',
+      latitude: '0',
+      longitude: '',
+      lastUpdated: new Date(2020, 10, 15, 10, 30).toISOString(),
+      weatherDictionary: ''
+    });
+  }
+
+  // Ensure at least one city exists
+  if (configData.cities.length === 0) {
+    configData.cities.push({
+      cityName: 'GPS',
+      latitude: '0',
+      longitude: '',
+      lastUpdated: new Date(2020, 10, 15, 10, 30).toISOString(),
+      weatherDictionary: ''
+    });
+    configData.gps = true;
+  }
 
   localStorage.setItem(KEY_CONFIG, JSON.stringify(configData));
 
-  console.log('Configuration page returned: ' + JSON.stringify(configData));
+  // Weather API selection (Open-Meteo or MET Norway)
+  localStorage.setItem('weather_api', configData.weather_api);
+  console.log("Weather API set to: " + configData.weather_api);
 
+  console.log('Configuration saved: ' + JSON.stringify(configData));
+
+  // Trigger double vibration on watch
+  var vibrateMessage = {
+    134: 1
+  };
+  Pebble.sendAppMessage(vibrateMessage, function() {
+    console.log('Vibration message sent');
+  }, function() {
+    console.log('Failed to send vibration message');
+  });
+
+  // Refresh weather data
   current_page = 0;
   runConfig();
-  current_page ++;
+  current_page++;
 });
 

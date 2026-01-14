@@ -133,6 +133,7 @@
             "KEY_RADIO_UNITS": 36,
             "KEY_SELECT_UTC": 35,
             "KEY_STATUS": 133,
+            "KEY_VIBRATE": 134,
             "KEY_SUNRISE": 6,
             "KEY_SUNSET": 7,
             "KEY_TEMPERATURE": 0,
@@ -408,7 +409,7 @@
                 },
                 {
                     "characterRegex": "[A-Z]",
-                    "file": "fonts/MOON",
+                    "file": "fonts/MOON.ttf",
                     "name": "FONT_BOLD_MOON_25",
                     "targetPlatforms": null,
                     "type": "font"
@@ -433,5 +434,5 @@
             "watchface": false
         }
     },
-    "version": "2.05"
+    "version": "2.06"
 }

@@ -187,6 +187,7 @@
 #define KEY_DAY5P 131
 #define KEY_DAY6P 132
 #define KEY_STATUS 133
+#define KEY_VIBRATE 134
 
 #define XOFFSET 18
 #define YOFFSET 6
@@ -1272,8 +1273,13 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
   Tuple *moonPhase4_tuple = dict_find(iterator, KEY_MOONPHASE4);
   Tuple *moonPhase5_tuple = dict_find(iterator, KEY_MOONPHASE5);
   Tuple *moonPhase6_tuple = dict_find(iterator, KEY_MOONPHASE6);
+  Tuple *vibrate_tuple = dict_find(iterator, KEY_VIBRATE);
 
-  if (status_tuple)
+  if (vibrate_tuple)
+  {
+    vibes_double_pulse();
+  }
+  else if (status_tuple)
   {
     char statusTemp[100];
     snprintf(statusTemp, sizeof(statusTemp), "%s%s", statusTemp, status_tuple->value->cstring);

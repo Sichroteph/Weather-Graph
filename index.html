@@ -128,6 +128,24 @@
 </div>
 
 
+<div class='item-container'>
+  <div class='item-container-header'>Weather Provider</div>
+  <div class='item-container-content'>
+    <label class='item'>
+      Open-Meteo (AROME)
+      <input type='radio' class='item-radio' name='radio_api' id='weather_api_openmeteo' value='openmeteo' checked>
+    </label>
+    <label class='item'>
+      MET Norway (yr.no)
+      <input type='radio' class='item-radio' name='radio_api' id='weather_api_metno' value='metno'>
+    </label>
+  </div>
+  <div class='item-container-footer'>
+    Open-Meteo uses Météo-France AROME model (1.5km resolution) - recommended for France.
+  </div>
+</div>
+
+
 <div class='colors'>
   <div class='item-container-header'>Colors</div>
   <div class='item-container-content'>
@@ -177,6 +195,7 @@
     var select_utc = document.getElementById('select_utc');
     var radio_units = document.getElementById('radio_units');
     var radio_refresh = document.getElementById('radio_refresh');
+    var weather_api_openmeteo = document.getElementById('weather_api_openmeteo');
 
     var toggle_vibration = document.getElementById('toggle_vibration');
     var toggle_bw_icons = document.getElementById('toggle_bw_icons');
@@ -195,6 +214,7 @@
       'select_utc': select_utc.value,
       'radio_units': radio_units.checked,
       'radio_refresh': radio_refresh.checked,
+      'weather_api': weather_api_openmeteo.checked ? 'openmeteo' : 'metno',
       'toggle_vibration': toggle_vibration.checked,
       'toggle_bw_icons': toggle_bw_icons.checked,
 
@@ -212,6 +232,7 @@
     localStorage['select_utc'] = options['select_utc'];
     localStorage['radio_units'] = options['radio_units'];
     localStorage['radio_refresh'] = options['radio_refresh'];
+    localStorage['weather_api'] = options['weather_api'];
     localStorage['toggle_vibration'] = options['toggle_vibration'];
     localStorage['toggle_bw_icons'] = options['toggle_bw_icons'];
     
@@ -254,6 +275,8 @@
     var select_utc = document.getElementById('select_utc');
     var radio_units = document.getElementById('radio_units');
     var radio_refresh = document.getElementById('radio_refresh');
+    var weather_api_openmeteo = document.getElementById('weather_api_openmeteo');
+    var weather_api_metno = document.getElementById('weather_api_metno');
     var toggle_vibration = document.getElementById('toggle_vibration');
     var toggle_bw_icons = document.getElementById('toggle_bw_icons');
     var color_right_back = document.getElementById('color_right_back');
@@ -267,6 +290,11 @@
     select_utc.value =  JSON.parse(localStorage['select_utc']);
     radio_units.checked =  JSON.parse(localStorage['radio_units']);
     radio_refresh.checked =  JSON.parse(localStorage['radio_refresh']);
+    
+    var savedApi = localStorage['weather_api'] || 'openmeteo';
+    weather_api_openmeteo.checked = (savedApi === 'openmeteo');
+    weather_api_metno.checked = (savedApi === 'metno');
+    
     toggle_vibration.checked =  JSON.parse(localStorage['toggle_vibration']);
     toggle_bw_icons.checked =  JSON.parse(localStorage['toggle_bw_icons']);
     
