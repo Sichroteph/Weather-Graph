@@ -1,199 +1,195 @@
 <!DOCTYPE html>
 <html>
-  <head>
+
+<head>
   <title>Time Graph</title>
   <link rel='stylesheet' type='text/css' href='css/slate.min.css'>
   <script src='js/slate.min.js'></script>
   <style>
-  .title {
-    padding: 15px 10px;
-    text-transform: uppercase;
-    font-family: 'PT Sans', sans-serif;
-    font-size: 1.2em;
-    font-weight: 500;
-    color: #888888;
-    text-align: center;
-  }
+    .title {
+      padding: 15px 10px;
+      text-transform: uppercase;
+      font-family: 'PT Sans', sans-serif;
+      font-size: 1.2em;
+      font-weight: 500;
+      color: #888888;
+      text-align: center;
+    }
   </style>
-  </head>
+</head>
 
-  <body>
-    <h1 class='title'>Weather graph</h1>
-
-
-    <div class='item-container'>
-  <div class='item-container-header'>Units</div>
-  <div class='item-container-content'>
-
-    <label class='item'>
-    GPS
-      <input id='gps' type='checkbox' class='item-toggle' true>
-    </label>
+<body>
+  <h1 class='title'>Weather graph</h1>
 
 
-    
-    Your city if no GPS:
+  <div class='item-container'>
+    <div class='item-container-header'>Units</div>
+    <div class='item-container-content'>
 
-        <label class='item'>
-          <div class='item-input-wrapper'>
-            <input type='text' class='item-input' input id='input_city' placeholder='Input field')>
-          </div>
-        </label>
-
-
-     <label class='item'>
-      UTC time offset
-      <select input id='select_utc' dir='rtl' class='item-select'>
-            <option class='item-select-option'>-9</option>
-            <option class='item-select-option'>-8</option>            
-            <option class='item-select-option'>-7</option>
-            <option class='item-select-option'>-6</option>
-            <option class='item-select-option'>-5</option>
-            <option class='item-select-option'>-4</option>
-            <option class='item-select-option'>-3</option>            
-            <option class='item-select-option'>-2</option>            
-            <option class='item-select-option'>-1</option>
-            <option class='item-select-option'>-0</option>            
-            <option class='item-select-option' selected>1</option>
-            <option class='item-select-option'>2</option>         
-            <option class='item-select-option'>3</option>
-            <option class='item-select-option'>4</option>
-            <option class='item-select-option'>5</option>
-            <option class='item-select-option'>6</option>
-            <option class='item-select-option'>7</option>            
-            <option class='item-select-option'>8</option>
-            <option class='item-select-option'>9</option>            
-            <option class='item-select-option'>10</option>            
-            <option class='item-select-option'>11</option>
-            <option class='item-select-option'>12</option>
-      </select>
-    </label>
-
-    <div class='item-container-footer'>
-    You can find this number by visiting <a href='http://www.timeanddate.com/time/map/'>this site</a>
-  </div>
-
-    </div>
-</div>
-
-
-<div class='item-container'>
-  <div class='item-container-header'>Units</div>
-  <div class='item-container-content'>
-    <label class='item'>
-      Imperial
-      <input type='radio' class='item-radio'  name = 'radio1' input id='radio_units' value='a'>
-    </label>
-    <label class='item'>
-      Metric
-      <input type='radio' class='item-radio'  name= 'radio1' input id='radio_units' value='b' checked>
-    </label>
-  </div>
-</div>
-
-        
-<div class='item-container'>
-  <div class='item-container-header'>Others</div>
-  <div class='item-container-content'>
-  <div style="display:none;">
-    <label class='item'>
-      Hourly vibrations
-      <input type='checkbox' class='item-toggle' input id='toggle_vibration'>
-    </label>
-    <div class='item-container-footer'>
-      Starts at 10am - Ends at 10pm
-    </div>
-    </div>
-    <label class='item'>
-      White icons
-      <input type='checkbox' class='item-toggle'  input id='toggle_bw_icons'>
-    </label>
-        <div class='item-container-footer'>
-    Only applies to Pebble Time.
-  </div>
-  </div>    
-  </div>
-</div>  
-
-<div class='item-container'>
-  <div class='item-container-header'>Weather Provider</div>
-  <div class='item-container-content'>
-    <label class='item'>
-      Open-Meteo (AROME)
-      <input type='radio' class='item-radio' name='radio_api' id='weather_api_openmeteo' value='openmeteo' checked>
-    </label>
-    <label class='item'>
-      MET Norway (yr.no)
-      <input type='radio' class='item-radio' name='radio_api' id='weather_api_metno' value='metno'>
-    </label>
-  </div>
-  <div class='item-container-footer'>
-    Open-Meteo uses Météo-France AROME model (1.5km resolution) - recommended for France.
-  </div>
-</div>
-
-<div style="display:none;">
-<div class='item-container'>
-  <div class='item-container-header'>Weather update</div>
-  <div class='item-container-content'>
-    <label class='item'>
-      30 mn
-      <input type='radio' class='item-radio'  name = 'radio2' input id='radio_refresh' value='a' >
-    </label>
-    <label class='item'>
-      60 mn
-      <input type='radio' class='item-radio'  name= 'radio2' input id='radio_refresh' value='b' checked>
-    </label>
-  </div>
-</div>
-</div>
-
-    <div style="display:none;">
-<div class='colors'>
-  <div class='item-container-header'>Colors</div>
-  <div class='item-container-content'>
-     <div style="display:none;">
-     <label class='item'>
-      Hours backgroud color
-      <input type='text' class='item-color item-color-normal' input id='color_right_back' value='0x000000' display='none'>
-    </label>
-    </div>
-    <label class='item'>
-      Background color
-      <input type='text' class='item-color item-color-sunny' input id='color_left_back' value='0x000000'>
-    </label>
-
-    <div style="display:none;">
       <label class='item'>
-      Hours color
-      <input type='text' class='item-color item-color-sunny' input id='color_hours' value='0xFFFFFF'>
-    </label>
+        GPS
+        <input id='gps' type='checkbox' class='item-toggle' true>
+      </label>
+
+
+
+      Your city if no GPS:
+
+      <label class='item'>
+        <div class='item-input-wrapper'>
+          <input type='text' class='item-input' input id='input_city' placeholder='Input field' )>
+        </div>
+      </label>
+
+
+      <label class='item'>
+        UTC time offset
+        <select input id='select_utc' dir='rtl' class='item-select'>
+          <option class='item-select-option'>-9</option>
+          <option class='item-select-option'>-8</option>
+          <option class='item-select-option'>-7</option>
+          <option class='item-select-option'>-6</option>
+          <option class='item-select-option'>-5</option>
+          <option class='item-select-option'>-4</option>
+          <option class='item-select-option'>-3</option>
+          <option class='item-select-option'>-2</option>
+          <option class='item-select-option'>-1</option>
+          <option class='item-select-option'>-0</option>
+          <option class='item-select-option' selected>1</option>
+          <option class='item-select-option'>2</option>
+          <option class='item-select-option'>3</option>
+          <option class='item-select-option'>4</option>
+          <option class='item-select-option'>5</option>
+          <option class='item-select-option'>6</option>
+          <option class='item-select-option'>7</option>
+          <option class='item-select-option'>8</option>
+          <option class='item-select-option'>9</option>
+          <option class='item-select-option'>10</option>
+          <option class='item-select-option'>11</option>
+          <option class='item-select-option'>12</option>
+        </select>
+      </label>
+
+      <div class='item-container-footer'>
+        You can find this number by visiting <a href='http://www.timeanddate.com/time/map/'>this site</a>
       </div>
-  
-     <div style="display:none;">
-    <label class='item'>
-      Ruler color
-      <input type='text' class='item-color item-color-sunny' input id='color_ruler' value='0xFFFFFF'>
-    </label>
-      </div>
-    <label class='item'>
-      Temperatures color
-      <input type='text' class='item-color item-color-sunny' input id='color_temperatures' value='0xFFFFFF'>
-    </label>
-  </div>
-</div>
+
+    </div>
   </div>
 
 
-    <div class='item-container'>
-      <div class='button-container'>
-        <input id='submit_button' type='button' class='item-button' value='SUBMIT'>
+  <div class='item-container'>
+    <div class='item-container-header'>Units</div>
+    <div class='item-container-content'>
+      <label class='item'>
+        Imperial
+        <input type='radio' class='item-radio' name='radio1' input id='radio_units' value='a'>
+      </label>
+      <label class='item'>
+        Metric
+        <input type='radio' class='item-radio' name='radio1' input id='radio_units' value='b' checked>
+      </label>
+    </div>
+  </div>
+
+
+  <div class='item-container'>
+    <div class='item-container-header'>Others</div>
+    <div class='item-container-content'>
+      <label class='item'>
+        Hourly vibrations
+        <input type='checkbox' class='item-toggle' input id='toggle_vibration'>
+      </label>
+      <div class='item-container-footer'>
+        Starts at 10am - Ends at 10pm
+      </div>
+      <label class='item'>
+        White icons
+        <input type='checkbox' class='item-toggle' input id='toggle_bw_icons'>
+      </label>
+      <div class='item-container-footer'>
+        Only applies to Pebble Time.
       </div>
     </div>
-  </body>
+  </div>
+  </div>
+
+  <div class='item-container'>
+    <div class='item-container-header'>Weather update</div>
+    <div class='item-container-content'>
+      <label class='item'>
+        30 mn
+        <input type='radio' class='item-radio' name='radio2' input id='radio_refresh' value='a'>
+      </label>
+      <label class='item'>
+        60 mn
+        <input type='radio' class='item-radio' name='radio2' input id='radio_refresh' value='b' checked>
+      </label>
+    </div>
+  </div>
 
 
-  <script>
+  <div class='item-container'>
+    <div class='item-container-header'>Weather Provider</div>
+    <div class='item-container-content'>
+      <label class='item'>
+        Open-Meteo (AROME)
+        <input type='radio' class='item-radio' name='radio_api' id='weather_api_openmeteo' value='openmeteo' checked>
+      </label>
+      <label class='item'>
+        MET Norway (yr.no)
+        <input type='radio' class='item-radio' name='radio_api' id='weather_api_metno' value='metno'>
+      </label>
+    </div>
+    <div class='item-container-footer'>
+      Open-Meteo uses Météo-France AROME model (1.5km resolution) - recommended for France.
+    </div>
+  </div>
+
+
+  <div class='colors'>
+    <div class='item-container-header'>Colors</div>
+    <div class='item-container-content'>
+      <div style="display:none;">
+        <label class='item'>
+          Hours backgroud color
+          <input type='text' class='item-color item-color-normal' input id='color_right_back' value='0x000000'
+            display='none'>
+        </label>
+      </div>
+      <label class='item'>
+        Background color
+        <input type='text' class='item-color item-color-sunny' input id='color_left_back' value='0x000000'>
+      </label>
+      <label class='item'>
+        Hours color
+        <input type='text' class='item-color item-color-sunny' input id='color_hours' value='0xFFFFFF'>
+      </label>
+
+      <div style="display:none;">
+        <label class='item'>
+          Ruler color
+          <input type='text' class='item-color item-color-sunny' input id='color_ruler' value='0xFFFFFF'>
+        </label>
+      </div>
+      <label class='item'>
+        Temperatures color
+        <input type='text' class='item-color item-color-sunny' input id='color_temperatures' value='0xFFFFFF'>
+      </label>
+    </div>
+  </div>
+
+
+
+  <div class='item-container'>
+    <div class='button-container'>
+      <input id='submit_button' type='button' class='item-button' value='SUBMIT'>
+    </div>
+  </div>
+</body>
+
+
+<script>
 
   function getConfigData() {
     var gps = document.getElementById('gps');
@@ -224,11 +220,11 @@
       'toggle_vibration': toggle_vibration.checked,
       'toggle_bw_icons': toggle_bw_icons.checked,
 
-       'color_right_back': color_right_back.value,
-       'color_left_back': color_left_back.value,
-       'color_hours': color_hours.value,
-       'color_ruler': color_ruler.value,
-       'color_temperatures': color_temperatures.value,
+      'color_right_back': color_right_back.value,
+      'color_left_back': color_left_back.value,
+      'color_hours': color_hours.value,
+      'color_ruler': color_ruler.value,
+      'color_temperatures': color_temperatures.value,
 
     };
 
@@ -241,7 +237,7 @@
     localStorage['weather_api'] = options['weather_api'];
     localStorage['toggle_vibration'] = options['toggle_vibration'];
     localStorage['toggle_bw_icons'] = options['toggle_bw_icons'];
-    
+
     localStorage['color_right_back'] = options['color_right_back'];
     localStorage['color_left_back'] = options['color_left_back'];
     localStorage['color_hours'] = options['color_hours'];
@@ -265,9 +261,9 @@
     }
     return defaultValue || false;
   }
- 
+
   var submitButton = document.getElementById('submit_button');
-  submitButton.addEventListener('click', function() {
+  submitButton.addEventListener('click', function () {
     console.log('Submit');
 
     // Set the return URL depending on the runtime environment
@@ -275,7 +271,7 @@
     document.location = return_to + encodeURIComponent(JSON.stringify(getConfigData()));
   });
 
-  (function() {
+  (function () {
     var gps = document.getElementById('gps');
     var input_city = document.getElementById('input_city');
     var select_utc = document.getElementById('select_utc');
@@ -292,24 +288,25 @@
     var color_temperatures = document.getElementById('color_temperatures');
 
     gps.checked = JSON.parse(localStorage['gps']);
-    input_city.value =  localStorage['input_city'];
-    select_utc.value =  JSON.parse(localStorage['select_utc']);
-    radio_units.checked =  JSON.parse(localStorage['radio_units']);
-    radio_refresh.checked =  JSON.parse(localStorage['radio_refresh']);
-    
+    input_city.value = localStorage['input_city'];
+    select_utc.value = JSON.parse(localStorage['select_utc']);
+    radio_units.checked = JSON.parse(localStorage['radio_units']);
+    radio_refresh.checked = JSON.parse(localStorage['radio_refresh']);
+
     var savedApi = localStorage['weather_api'] || 'openmeteo';
     weather_api_openmeteo.checked = (savedApi === 'openmeteo');
     weather_api_metno.checked = (savedApi === 'metno');
-    
-    toggle_vibration.checked =  JSON.parse(localStorage['toggle_vibration']);
-    toggle_bw_icons.checked =  JSON.parse(localStorage['toggle_bw_icons']);
-    
-    color_right_back.value =  localStorage['color_right_back'];
-    color_left_back.value =  localStorage['color_left_back'];
-    color_hours.value =  localStorage['color_hours'];
-    color_ruler.value =  localStorage['color_ruler'];
-    color_temperatures.value =  localStorage['color_temperatures'];
+
+    toggle_vibration.checked = JSON.parse(localStorage['toggle_vibration']);
+    toggle_bw_icons.checked = JSON.parse(localStorage['toggle_bw_icons']);
+
+    color_right_back.value = localStorage['color_right_back'];
+    color_left_back.value = localStorage['color_left_back'];
+    color_hours.value = localStorage['color_hours'];
+    color_ruler.value = localStorage['color_ruler'];
+    color_temperatures.value = localStorage['color_temperatures'];
 
   })();
-  </script>
+</script>
+
 </html>
