@@ -325,8 +325,9 @@ static char sunset[20] = " ";
 
 static char humidity[20] = " ";
 static int moonPhase[6];
-static char *transPhase[26] = {"N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "A",
-                               "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M"};
+static char *transPhase[26] = {"N", "O", "P", "Q", "R", "S", "T", "U", "V",
+                               "W", "X", "Y", "Z", "A", "B", "C", "D", "E",
+                               "F", "G", "H", "I", "J", "K", "L", "M"};
 static int dayr[6];
 static int dayp[6];
 
@@ -353,103 +354,96 @@ static GFont statusfontdate;
 
 int scdCounter;
 
-static char *weekdayLangFr[7] = {"DIMANCHE", "LUNDI", "MARDI", "MERCREDI", "JEUDI", "VENDREDI", "SAMEDI"};
-static char *weekdayLangEn[7] = {"SUNDAY", "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY"};
-static char *weekdayLangDe[7] = {"SONNTAG", "MONTAG", "DIENSTAG", "MITTWOCH", "DONNERSTAG", "FREITAG", "SAMSTAG"};
-static char *weekdayLangEs[7] = {"DOMINGO", "LUNES", "MARTES", "MIERCOLES", "JUEVES", "VIERNES", "SABADO"};
+static char *weekdayLangFr[7] = {"DIMANCHE", "LUNDI",    "MARDI", "MERCREDI",
+                                 "JEUDI",    "VENDREDI", "SAMEDI"};
+static char *weekdayLangEn[7] = {"SUNDAY",   "MONDAY", "TUESDAY", "WEDNESDAY",
+                                 "THURSDAY", "FRIDAY", "SATURDAY"};
+static char *weekdayLangDe[7] = {"SONNTAG",  "MONTAG",     "DIENSTAG",
+                                 "MITTWOCH", "DONNERSTAG", "FREITAG",
+                                 "SAMSTAG"};
+static char *weekdayLangEs[7] = {"DOMINGO", "LUNES",   "MARTES", "MIERCOLES",
+                                 "JUEVES",  "VIERNES", "SABADO"};
 
-static int build_icon(char *text_icon)
-{
+static int build_icon(char *text_icon) {
   // APP_LOG(APP_LOG_LEVEL_INFO, "texte ICONE  %s", text_icon);
-  if ((strcmp(text_icon, "clearsky_day") == 0))
-  {
+  if ((strcmp(text_icon, "clearsky_day") == 0)) {
     if ((is_bw_icon) || (!IS_COLOR))
       return RESOURCE_ID_ENSOLEILLE_W;
     else
       return RESOURCE_ID_ENSOLEILLE;
   }
-  if ((strcmp(text_icon, "clearsky_night") == 0))
-  {
+  if ((strcmp(text_icon, "clearsky_night") == 0)) {
     if ((is_bw_icon) || (!IS_COLOR))
       return RESOURCE_ID_NUIT_CLAIRE_W;
     else
       return RESOURCE_ID_NUIT_CLAIRE;
   }
-  if ((strcmp(text_icon, "fair_day") == 0) || (strcmp(text_icon, "fair_polartwilight") == 0))
-  {
+  if ((strcmp(text_icon, "fair_day") == 0) ||
+      (strcmp(text_icon, "fair_polartwilight") == 0)) {
     if ((is_bw_icon) || (!IS_COLOR))
       return RESOURCE_ID_FAIBLES_PASSAGES_NUAGEUX_W;
     else
       return RESOURCE_ID_FAIBLES_PASSAGES_NUAGEUX;
   }
-  if (strcmp(text_icon, "fair_night") == 0)
-  {
+  if (strcmp(text_icon, "fair_night") == 0) {
     if ((is_bw_icon) || (!IS_COLOR))
       return RESOURCE_ID_NUIT_BIEN_DEGAGEE_W;
     else
       return RESOURCE_ID_NUIT_BIEN_DEGAGEE;
   }
-  if (strcmp(text_icon, "wind") == 0)
-  {
+  if (strcmp(text_icon, "wind") == 0) {
     if ((is_bw_icon) || (!IS_COLOR))
       return RESOURCE_ID_WIND;
     else
       return RESOURCE_ID_WIND;
   }
-  if ((strcmp(text_icon, "partlycloudy_day") == 0) || (strcmp(text_icon, "partlycloudy_polartwilight") == 0))
-  {
+  if ((strcmp(text_icon, "partlycloudy_day") == 0) ||
+      (strcmp(text_icon, "partlycloudy_polartwilight") == 0)) {
     if ((is_bw_icon) || (!IS_COLOR))
       return RESOURCE_ID_DEVELOPPEMENT_NUAGEUX_W;
     else
       return RESOURCE_ID_DEVELOPPEMENT_NUAGEUX;
   }
-  if ((strcmp(text_icon, "partlycloudy_night") == 0))
-  {
+  if ((strcmp(text_icon, "partlycloudy_night") == 0)) {
     if ((is_bw_icon) || (!IS_COLOR))
       return RESOURCE_ID_NUIT_AVEC_DEVELOPPEMENT_NUAGEUX_W;
     else
       return RESOURCE_ID_NUIT_AVEC_DEVELOPPEMENT_NUAGEUX;
   }
-  if ((strcmp(text_icon, "cloudy") == 0))
-  {
+  if ((strcmp(text_icon, "cloudy") == 0)) {
     if ((is_bw_icon) || (!IS_COLOR))
       return RESOURCE_ID_FORTEMENT_NUAGEUX_W;
     else
       return RESOURCE_ID_FORTEMENT_NUAGEUX;
   }
 
-  if (strstr(text_icon, "rain") != NULL)
-  {
+  if (strstr(text_icon, "rain") != NULL) {
     if ((is_bw_icon) || (!IS_COLOR))
       return RESOURCE_ID_AVERSES_DE_PLUIE_FORTE_W;
     else
       return RESOURCE_ID_AVERSES_DE_PLUIE_FORTE;
   }
-  if (strcmp(text_icon, "rainshowers_night") == 0)
-  {
+  if (strcmp(text_icon, "rainshowers_night") == 0) {
     if ((is_bw_icon) || (!IS_COLOR))
       return RESOURCE_ID_NUIT_AVEC_AVERSES_W;
     else
       return RESOURCE_ID_NUIT_AVEC_AVERSES;
   }
 
-  if (strstr(text_icon, "thunder") != NULL)
-  {
+  if (strstr(text_icon, "thunder") != NULL) {
     if ((is_bw_icon) || (!IS_COLOR))
       return RESOURCE_ID_FORTEMENT_ORAGEUX_W;
     else
       return RESOURCE_ID_FORTEMENT_ORAGEUX;
   }
 
-  if (strstr(text_icon, "snow") || (strstr(text_icon, "sleet")) != NULL)
-  {
+  if (strstr(text_icon, "snow") || (strstr(text_icon, "sleet")) != NULL) {
     if ((is_bw_icon) || (!IS_COLOR))
       return RESOURCE_ID_NEIGE_FORTE_W;
     else
       return RESOURCE_ID_NEIGE_FORTE;
   }
-  if (strcmp(text_icon, "fog") == 0)
-  {
+  if (strcmp(text_icon, "fog") == 0) {
     if ((is_bw_icon) || (!IS_COLOR))
       return RESOURCE_ID_BROUILLARD_W;
     else
@@ -458,36 +452,30 @@ static int build_icon(char *text_icon)
 
   return RESOURCE_ID_BT;
 }
-int abs(int x)
-{
+int abs(int x) {
   if (x >= 0)
     return x;
   else
     return -x;
 }
 
-static void createdatetext(int day_i)
-{
-  if (strcmp(pebble_Lang, "en_US") == 0)
-  {
+static void createdatetext(int day_i) {
+  if (strcmp(pebble_Lang, "en_US") == 0) {
     snprintf(day_buffer, sizeof(day_buffer), "%s", weekdayLangEn[day_i]);
     return;
   }
 
-  if (strcmp(pebble_Lang, "fr_FR") == 0)
-  {
+  if (strcmp(pebble_Lang, "fr_FR") == 0) {
     snprintf(day_buffer, sizeof(day_buffer), "%s", weekdayLangFr[day_i]);
     return;
   }
 
-  if (strcmp(pebble_Lang, "de_DE") == 0)
-  {
+  if (strcmp(pebble_Lang, "de_DE") == 0) {
     snprintf(day_buffer, sizeof(day_buffer), "%s", weekdayLangDe[day_i]);
     return;
   }
 
-  if (strcmp(pebble_Lang, "es_ES") == 0)
-  {
+  if (strcmp(pebble_Lang, "es_ES") == 0) {
     snprintf(day_buffer, sizeof(day_buffer), "%s", weekdayLangEs[day_i]);
     return;
   }
@@ -495,8 +483,7 @@ static void createdatetext(int day_i)
   snprintf(day_buffer, sizeof(day_buffer), "%s", weekdayLangEn[day_i]);
 }
 
-static void layer_update(Layer *me, GContext *ctx)
-{
+static void layer_update(Layer *me, GContext *ctx) {
 
   GBitmap *s_icon;
   graphics_context_set_fill_color(ctx, GColorBlack);
@@ -507,15 +494,14 @@ static void layer_update(Layer *me, GContext *ctx)
   // page points
   graphics_context_set_fill_color(ctx, GColorWhite);
   // is_weather_aquired=0;
-  if (!is_weather_aquired)
-  {
+  if (!is_weather_aquired) {
 
     GRect rect_location = {{0, 0}, {WIDTH, 50}};
-    graphics_draw_text(ctx, location, fonts_get_system_font(FONT_KEY_BITHAM_30_BLACK), rect_location, GTextOverflowModeWordWrap,
-                       GTextAlignmentCenter, NULL);
+    graphics_draw_text(
+        ctx, location, fonts_get_system_font(FONT_KEY_BITHAM_30_BLACK),
+        rect_location, GTextOverflowModeWordWrap, GTextAlignmentCenter, NULL);
 
-    if (is_cache_mode == 0)
-    {
+    if (is_cache_mode == 0) {
       GRect rect_center = {{WIDTH / 2 - 7, 71}, {15, 15}};
       s_icon = gbitmap_create_with_resource(RESOURCE_ID_LOADING);
       graphics_draw_bitmap_in_rect(ctx, s_icon, rect_center);
@@ -524,16 +510,15 @@ static void layer_update(Layer *me, GContext *ctx)
       // GRect rect_log = {{15, 90}, {WIDTH, 180}};
       GRect rect_log = {{0, 90}, {WIDTH, 180}};
 
-      graphics_draw_text(ctx, statusFull, fonts_get_system_font(FONT_KEY_GOTHIC_14), rect_log, GTextOverflowModeWordWrap,
-                         GTextAlignmentCenter, NULL);
+      graphics_draw_text(ctx, statusFull,
+                         fonts_get_system_font(FONT_KEY_GOTHIC_14), rect_log,
+                         GTextOverflowModeWordWrap, GTextAlignmentCenter, NULL);
     }
   }
 
-  else
-  {
+  else {
 
-    for (int i = 0; i < 5; i++)
-    {
+    for (int i = 0; i < 5; i++) {
       circle_page.x = 10 * i + 75 + PAGE_POINTS_OFFSET;
       graphics_fill_circle(ctx, circle_page, 2);
     }
@@ -541,8 +526,7 @@ static void layer_update(Layer *me, GContext *ctx)
     circle_page.x = 10 * (page_nb - 1) + 75 + PAGE_POINTS_OFFSET;
     graphics_fill_circle(ctx, circle_page, 4);
 
-    if (page_nb == 1)
-    {
+    if (page_nb == 1) {
       static char status_text[100];
 #if defined(PBL_ROUND)
       GRect rect_temp = {{-23, 19}, {WIDTH, 50}};
@@ -581,7 +565,8 @@ static void layer_update(Layer *me, GContext *ctx)
       struct tm now = *(localtime(&t));
 
       graphics_context_set_text_color(ctx, GColorWhite);
-      snprintf(status_text, sizeof(status_text), "%s %i", weekdayLangEn[now.tm_wday], now.tm_mday);
+      snprintf(status_text, sizeof(status_text), "%s %i",
+               weekdayLangEn[now.tm_wday], now.tm_mday);
 
       // draw icon
       int icon_id;
@@ -589,8 +574,7 @@ static void layer_update(Layer *me, GContext *ctx)
 
       graphics_context_set_compositing_mode(ctx, GCompOpSet);
 
-      if (is_weather_aquired)
-      {
+      if (is_weather_aquired) {
         s_icon = gbitmap_create_with_resource(icon_id);
         graphics_draw_bitmap_in_rect(ctx, s_icon, rect_icon);
         gbitmap_destroy(s_icon);
@@ -605,73 +589,85 @@ static void layer_update(Layer *me, GContext *ctx)
       }
       // draw temperatures
 
-      graphics_draw_text(ctx, weather_temp, fonts_get_system_font(FONT_KEY_BITHAM_42_LIGHT), rect_temp, GTextOverflowModeWordWrap,
-                         GTextAlignmentRight, NULL);
+      graphics_draw_text(
+          ctx, weather_temp, fonts_get_system_font(FONT_KEY_BITHAM_42_LIGHT),
+          rect_temp, GTextOverflowModeWordWrap, GTextAlignmentRight, NULL);
 
 #if defined(PBL_ROUND)
-      graphics_draw_text(ctx, tmin, fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD), rect_tmin, GTextOverflowModeWordWrap,
-                         GTextAlignmentRight, NULL);
-      graphics_draw_text(ctx, tmax, fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD), rect_tmax, GTextOverflowModeWordWrap,
-                         GTextAlignmentRight, NULL);
+      graphics_draw_text(
+          ctx, tmin, fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD), rect_tmin,
+          GTextOverflowModeWordWrap, GTextAlignmentRight, NULL);
+      graphics_draw_text(
+          ctx, tmax, fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD), rect_tmax,
+          GTextOverflowModeWordWrap, GTextAlignmentRight, NULL);
 #else
-      graphics_draw_text(ctx, tmin, fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD), rect_tmin, GTextOverflowModeWordWrap,
-                         GTextAlignmentRight, NULL);
-      graphics_draw_text(ctx, tmax, fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD), rect_tmax, GTextOverflowModeWordWrap,
-                         GTextAlignmentRight, NULL);
+      graphics_draw_text(
+          ctx, tmin, fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD), rect_tmin,
+          GTextOverflowModeWordWrap, GTextAlignmentRight, NULL);
+      graphics_draw_text(
+          ctx, tmax, fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD), rect_tmax,
+          GTextOverflowModeWordWrap, GTextAlignmentRight, NULL);
 
 #endif
 
-      graphics_draw_text(ctx, sunrise, fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD), rect_text_sunrise, GTextOverflowModeWordWrap,
+      graphics_draw_text(ctx, sunrise,
+                         fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD),
+                         rect_text_sunrise, GTextOverflowModeWordWrap,
                          GTextAlignmentRight, NULL);
-      graphics_draw_text(ctx, sunset, fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD), rect_text_sunset, GTextOverflowModeWordWrap,
+      graphics_draw_text(ctx, sunset,
+                         fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD),
+                         rect_text_sunset, GTextOverflowModeWordWrap,
                          GTextAlignmentRight, NULL);
 
-      graphics_draw_text(ctx, wind_speed_val, fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD), rect_wind, GTextOverflowModeWordWrap,
-                         GTextAlignmentRight, NULL);
+      graphics_draw_text(
+          ctx, wind_speed_val, fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD),
+          rect_wind, GTextOverflowModeWordWrap, GTextAlignmentRight, NULL);
 
-      graphics_draw_text(ctx, humidity, fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD), rect_humidity, GTextOverflowModeWordWrap,
-                         GTextAlignmentRight, NULL);
+      graphics_draw_text(
+          ctx, humidity, fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD),
+          rect_humidity, GTextOverflowModeWordWrap, GTextAlignmentRight, NULL);
     }
 
-    else if ((page_nb == 4) || (page_nb == 5))
-    {
+    else if ((page_nb == 4) || (page_nb == 5)) {
 
       // weather graph
       int index;
 
       // Pour sauter de 2 en 2 les valeurs à chaque page
-      if (page_nb == 4)
-      {
+      if (page_nb == 4) {
         index = -2;
       }
 
-      else if (page_nb == 5)
-      {
+      else if (page_nb == 5) {
         index = 0;
-      }
-      else
-      {
+      } else {
         index = 0;
       }
 
       GBitmap *s_icon;
       int var_weath_ofF_y = WEATHER_OFFSET_Y;
-      if ((!is_tapped) && (IS_ROUND))
-      {
+      if ((!is_tapped) && (IS_ROUND)) {
         var_weath_ofF_y += 10;
       }
       //  is_tapped=true;
       GRect rect_screen = {{0 + WEATHER_OFFSET_X, var_weath_ofF_y}, {180, 180}};
 
       GRect rect_h0 = {{6 + WEATHER_OFFSET_X, 116 + var_weath_ofF_y}, {60, 40}};
-      GRect rect_h1 = {{37 + WEATHER_OFFSET_X, 116 + var_weath_ofF_y}, {60, 40}};
-      GRect rect_h2 = {{68 + WEATHER_OFFSET_X, 116 + var_weath_ofF_y}, {60, 40}};
-      GRect rect_h3 = {{97 + WEATHER_OFFSET_X, 116 + var_weath_ofF_y}, {60, 40}};
+      GRect rect_h1 = {{37 + WEATHER_OFFSET_X, 116 + var_weath_ofF_y},
+                       {60, 40}};
+      GRect rect_h2 = {{68 + WEATHER_OFFSET_X, 116 + var_weath_ofF_y},
+                       {60, 40}};
+      GRect rect_h3 = {{97 + WEATHER_OFFSET_X, 116 + var_weath_ofF_y},
+                       {60, 40}};
 
-      GRect rect_wind0 = {{6 + WEATHER_OFFSET_X, 154 + var_weath_ofF_y}, {60, 10}};
-      GRect rect_wind1 = {{37 + WEATHER_OFFSET_X, 154 + var_weath_ofF_y}, {60, 10}};
-      GRect rect_wind2 = {{68 + WEATHER_OFFSET_X, 154 + var_weath_ofF_y}, {60, 10}};
-      GRect rect_wind3 = {{97 + WEATHER_OFFSET_X, 154 + var_weath_ofF_y}, {60, 10}};
+      GRect rect_wind0 = {{6 + WEATHER_OFFSET_X, 154 + var_weath_ofF_y},
+                          {60, 10}};
+      GRect rect_wind1 = {{37 + WEATHER_OFFSET_X, 154 + var_weath_ofF_y},
+                          {60, 10}};
+      GRect rect_wind2 = {{68 + WEATHER_OFFSET_X, 154 + var_weath_ofF_y},
+                          {60, 10}};
+      GRect rect_wind3 = {{97 + WEATHER_OFFSET_X, 154 + var_weath_ofF_y},
+                          {60, 10}};
 
       rect_wind0.size.h = 40;
       rect_wind1.size.h = 40;
@@ -680,15 +676,21 @@ static void layer_update(Layer *me, GContext *ctx)
 
 #if defined(PBL_ROUND)
 
-      GRect rect_t1 = {{-28 + WEATHER_OFFSET_X, 54 + var_weath_ofF_y}, {60, 20}};
-      GRect rect_t12 = {{-28 + WEATHER_OFFSET_X, 73 + var_weath_ofF_y}, {60, 20}};
-      GRect rect_t2 = {{-28 + WEATHER_OFFSET_X, 92 + var_weath_ofF_y}, {60, 20}};
+      GRect rect_t1 = {{-28 + WEATHER_OFFSET_X, 54 + var_weath_ofF_y},
+                       {60, 20}};
+      GRect rect_t12 = {{-28 + WEATHER_OFFSET_X, 73 + var_weath_ofF_y},
+                        {60, 20}};
+      GRect rect_t2 = {{-28 + WEATHER_OFFSET_X, 92 + var_weath_ofF_y},
+                       {60, 20}};
       GRect rect_patch = {{WEATHER_OFFSET_X, 150 + var_weath_ofF_y}, {80, 20}};
 #else
 
-      GRect rect_t1 = {{-25 + WEATHER_OFFSET_X, 51 + var_weath_ofF_y}, {60, 20}};
-      GRect rect_t12 = {{-25 + WEATHER_OFFSET_X, 73 + var_weath_ofF_y}, {60, 20}};
-      GRect rect_t2 = {{-25 + WEATHER_OFFSET_X, 95 + var_weath_ofF_y}, {60, 20}};
+      GRect rect_t1 = {{-25 + WEATHER_OFFSET_X, 51 + var_weath_ofF_y},
+                       {60, 20}};
+      GRect rect_t12 = {{-25 + WEATHER_OFFSET_X, 73 + var_weath_ofF_y},
+                        {60, 20}};
+      GRect rect_t2 = {{-25 + WEATHER_OFFSET_X, 95 + var_weath_ofF_y},
+                       {60, 20}};
       GRect rect_patch = {{WEATHER_OFFSET_X, 150 + var_weath_ofF_y}, {80, 20}};
 #endif
 
@@ -712,8 +714,7 @@ static void layer_update(Layer *me, GContext *ctx)
 
       int hour_style;
 
-      if (page_nb == 4)
-      {
+      if (page_nb == 4) {
         i_h0 = h0;
         i_h1 = h1;
         i_h2 = h2;
@@ -721,16 +722,13 @@ static void layer_update(Layer *me, GContext *ctx)
         i_h4 = h4;
       }
 
-      else if (page_nb == 5)
-      {
+      else if (page_nb == 5) {
         i_h0 = h4;
         i_h1 = h5;
         i_h2 = h6;
         i_h3 = h7;
         i_h4 = h8;
-      }
-      else
-      {
+      } else {
         i_h0 = -1;
         i_h1 = -1;
         i_h2 = -1;
@@ -756,26 +754,30 @@ static void layer_update(Layer *me, GContext *ctx)
       int max_rain = MAXRAIN;
       graphics_context_set_fill_color(ctx, RAIN_COLOR);
 
-      for (int i_segments = 0; i_segments < 12; i_segments++)
-      {
+      for (int i_segments = 0; i_segments < 12; i_segments++) {
 
-        int rain_pixel = 45 * rains[(page_nb - 2 + index) * 3 + i_segments] / max_rain;
+        int rain_pixel =
+            45 * rains[(page_nb - 2 + index) * 3 + i_segments] / max_rain;
 
-        if (rain_pixel > 45)
-        {
+        if (rain_pixel > 45) {
           rain_pixel = 45;
         }
 
-        if (IS_COLOR)
-        {
-          graphics_fill_rect(ctx, GRect(37 + WEATHER_OFFSET_X + i_segments * 10, 76 + 45 - rain_pixel + var_weath_ofF_y, 10, rain_pixel), 0, GCornerNone);
+        if (IS_COLOR) {
+          graphics_fill_rect(ctx,
+                             GRect(37 + WEATHER_OFFSET_X + i_segments * 10,
+                                   76 + 45 - rain_pixel + var_weath_ofF_y, 10,
+                                   rain_pixel),
+                             0, GCornerNone);
         }
 
-        else
-        {
-          for (int i = 0; i < 10; i = i + 2)
-          {
-            graphics_fill_rect(ctx, GRect(37 + WEATHER_OFFSET_X + i + i_segments * 10, 76 + 45 - rain_pixel + var_weath_ofF_y, 1, rain_pixel), 0, GCornerNone);
+        else {
+          for (int i = 0; i < 10; i = i + 2) {
+            graphics_fill_rect(
+                ctx,
+                GRect(37 + WEATHER_OFFSET_X + i + i_segments * 10,
+                      76 + 45 - rain_pixel + var_weath_ofF_y, 1, rain_pixel),
+                0, GCornerNone);
           }
         }
       }
@@ -783,15 +785,12 @@ static void layer_update(Layer *me, GContext *ctx)
       int ttmin = temps[0];
       int ttmax = temps[0];
 
-      for (int k = 0; k < 9; k++)
-      {
-        if (ttmin >= temps[k])
-        {
+      for (int k = 0; k < 9; k++) {
+        if (ttmin >= temps[k]) {
           ttmin = temps[k];
         }
 
-        if (ttmax < temps[k])
-        {
+        if (ttmax < temps[k]) {
           ttmax = temps[k];
         }
       }
@@ -799,8 +798,7 @@ static void layer_update(Layer *me, GContext *ctx)
       // APP_LOG(APP_LOG_LEVEL_INFO, "ttmin %i ttmax %i", ttmin,  ttmax);
 
       int echelle = 1;
-      while (ttmin < ttmax - echelle * 3)
-      {
+      while (ttmin < ttmax - echelle * 3) {
         echelle++;
       }
       //  APP_LOG(APP_LOG_LEVEL_INFO, "echelle %i",echelle);
@@ -817,12 +815,12 @@ static void layer_update(Layer *me, GContext *ctx)
       // snprintf(t2, sizeof(t2), "%i", ttmax-echelle*2);
 
       graphics_context_set_text_color(ctx, GColorWhite);
-      graphics_draw_text(ctx, t1, statusfontdate, rect_t1, GTextOverflowModeWordWrap,
-                         GTextAlignmentRight, NULL);
-      graphics_draw_text(ctx, t12, statusfontdate, rect_t12, GTextOverflowModeWordWrap,
-                         GTextAlignmentRight, NULL);
-      graphics_draw_text(ctx, t2, statusfontdate, rect_t2, GTextOverflowModeWordWrap,
-                         GTextAlignmentRight, NULL);
+      graphics_draw_text(ctx, t1, statusfontdate, rect_t1,
+                         GTextOverflowModeWordWrap, GTextAlignmentRight, NULL);
+      graphics_draw_text(ctx, t12, statusfontdate, rect_t12,
+                         GTextOverflowModeWordWrap, GTextAlignmentRight, NULL);
+      graphics_draw_text(ctx, t2, statusfontdate, rect_t2,
+                         GTextOverflowModeWordWrap, GTextAlignmentRight, NULL);
 
       float f;
       f = 76 + (ttmax - temps[page_nb - 2 + index]) * 15 / echelle;
@@ -845,48 +843,64 @@ static void layer_update(Layer *me, GContext *ctx)
 
       // Temperature
       int decallage_y = -7;
-      if ((temps[page_nb - 2 + index] < freezing_temp) && (temps[page_nb - 1 + index] < freezing_temp))
+      if ((temps[page_nb - 2 + index] < freezing_temp) &&
+          (temps[page_nb - 1 + index] < freezing_temp))
         graphics_context_set_stroke_color(ctx, BLUE_LINE);
       else
         graphics_context_set_stroke_color(ctx, RED_LINE);
 
-      graphics_draw_line(ctx, GPoint(37 + WEATHER_OFFSET_X, y1 + var_weath_ofF_y + decallage_y), GPoint(67 + WEATHER_OFFSET_X, y2 + var_weath_ofF_y + decallage_y));
+      graphics_draw_line(
+          ctx,
+          GPoint(37 + WEATHER_OFFSET_X, y1 + var_weath_ofF_y + decallage_y),
+          GPoint(67 + WEATHER_OFFSET_X, y2 + var_weath_ofF_y + decallage_y));
 
-      if ((temps[page_nb - 1 + index] < freezing_temp) && (temps[page_nb + index] < freezing_temp))
+      if ((temps[page_nb - 1 + index] < freezing_temp) &&
+          (temps[page_nb + index] < freezing_temp))
         graphics_context_set_stroke_color(ctx, BLUE_LINE);
       else
         graphics_context_set_stroke_color(ctx, RED_LINE);
 
-      graphics_draw_line(ctx, GPoint(67 + WEATHER_OFFSET_X, y2 + var_weath_ofF_y + decallage_y), GPoint(97 + WEATHER_OFFSET_X, y3 + var_weath_ofF_y + decallage_y));
+      graphics_draw_line(
+          ctx,
+          GPoint(67 + WEATHER_OFFSET_X, y2 + var_weath_ofF_y + decallage_y),
+          GPoint(97 + WEATHER_OFFSET_X, y3 + var_weath_ofF_y + decallage_y));
 
-      if ((temps[page_nb + index] < freezing_temp) && (temps[page_nb + 1 + index] < freezing_temp))
+      if ((temps[page_nb + index] < freezing_temp) &&
+          (temps[page_nb + 1 + index] < freezing_temp))
         graphics_context_set_stroke_color(ctx, BLUE_LINE);
       else
         graphics_context_set_stroke_color(ctx, RED_LINE);
 
-      graphics_draw_line(ctx, GPoint(97 + WEATHER_OFFSET_X, y3 + var_weath_ofF_y + decallage_y), GPoint(127 + WEATHER_OFFSET_X, y4 + var_weath_ofF_y + decallage_y));
+      graphics_draw_line(
+          ctx,
+          GPoint(97 + WEATHER_OFFSET_X, y3 + var_weath_ofF_y + decallage_y),
+          GPoint(127 + WEATHER_OFFSET_X, y4 + var_weath_ofF_y + decallage_y));
 
-      if ((temps[page_nb + 1 + index] < freezing_temp) && (temps[page_nb + 2 + index] < freezing_temp))
+      if ((temps[page_nb + 1 + index] < freezing_temp) &&
+          (temps[page_nb + 2 + index] < freezing_temp))
         graphics_context_set_stroke_color(ctx, BLUE_LINE);
       else
         graphics_context_set_stroke_color(ctx, RED_LINE);
 
-      graphics_draw_line(ctx, GPoint(127 + WEATHER_OFFSET_X, y4 + var_weath_ofF_y + decallage_y), GPoint(157 + WEATHER_OFFSET_X, y5 + var_weath_ofF_y + decallage_y));
+      graphics_draw_line(
+          ctx,
+          GPoint(127 + WEATHER_OFFSET_X, y4 + var_weath_ofF_y + decallage_y),
+          GPoint(157 + WEATHER_OFFSET_X, y5 + var_weath_ofF_y + decallage_y));
 
-      GRect rect_icon1 = {{67 - 18 + WEATHER_OFFSET_X, 25 + var_weath_ofF_y}, {36, 36}};
-      GRect rect_icon2 = {{97 - 18 + WEATHER_OFFSET_X, 25 + var_weath_ofF_y}, {36, 36}};
-      GRect rect_icon3 = {{127 - 18 + WEATHER_OFFSET_X, 25 + var_weath_ofF_y}, {36, 36}};
+      GRect rect_icon1 = {{67 - 18 + WEATHER_OFFSET_X, 25 + var_weath_ofF_y},
+                          {36, 36}};
+      GRect rect_icon2 = {{97 - 18 + WEATHER_OFFSET_X, 25 + var_weath_ofF_y},
+                          {36, 36}};
+      GRect rect_icon3 = {{127 - 18 + WEATHER_OFFSET_X, 25 + var_weath_ofF_y},
+                          {36, 36}};
 
       graphics_context_set_compositing_mode(ctx, GCompOpSet);
 
-      if (!IS_COLOR)
-      {
+      if (!IS_COLOR) {
         s_icon = gbitmap_create_with_resource(RESOURCE_ID_TABLE_OG);
         graphics_draw_bitmap_in_rect(ctx, s_icon, rect_screen);
         gbitmap_destroy(s_icon);
-      }
-      else
-      {
+      } else {
         s_icon = gbitmap_create_with_resource(RESOURCE_ID_TABLE);
         graphics_draw_bitmap_in_rect(ctx, s_icon, rect_screen);
         gbitmap_destroy(s_icon);
@@ -895,25 +909,29 @@ static void layer_update(Layer *me, GContext *ctx)
       graphics_context_set_fill_color(ctx, GColorBlack);
       graphics_fill_rect(ctx, rect_patch, 0, GCornerNone);
 
-      graphics_draw_text(ctx, h0_buffer, statusfontdate, rect_h0, GTextOverflowModeWordWrap,
+      graphics_draw_text(ctx, h0_buffer, statusfontdate, rect_h0,
+                         GTextOverflowModeWordWrap, GTextAlignmentCenter, NULL);
+
+      graphics_draw_text(ctx, h1_buffer, statusfontdate, rect_h1,
+                         GTextOverflowModeWordWrap, GTextAlignmentCenter, NULL);
+      graphics_draw_text(ctx, h2_buffer, statusfontdate, rect_h2,
+                         GTextOverflowModeWordWrap, GTextAlignmentCenter, NULL);
+      graphics_draw_text(ctx, h3_buffer, statusfontdate, rect_h3,
+                         GTextOverflowModeWordWrap, GTextAlignmentCenter, NULL);
+
+      graphics_draw_text(ctx, winds[page_nb - 2 + index], statusfontsmall,
+                         rect_wind0, GTextOverflowModeWordWrap,
                          GTextAlignmentCenter, NULL);
 
-      graphics_draw_text(ctx, h1_buffer, statusfontdate, rect_h1, GTextOverflowModeWordWrap,
-                         GTextAlignmentCenter, NULL);
-      graphics_draw_text(ctx, h2_buffer, statusfontdate, rect_h2, GTextOverflowModeWordWrap,
-                         GTextAlignmentCenter, NULL);
-      graphics_draw_text(ctx, h3_buffer, statusfontdate, rect_h3, GTextOverflowModeWordWrap,
+      graphics_draw_text(ctx, winds[page_nb - 1 + index], statusfontsmall,
+                         rect_wind1, GTextOverflowModeWordWrap,
                          GTextAlignmentCenter, NULL);
 
-      graphics_draw_text(ctx, winds[page_nb - 2 + index], statusfontsmall, rect_wind0, GTextOverflowModeWordWrap,
+      graphics_draw_text(ctx, winds[page_nb + index], statusfontsmall,
+                         rect_wind2, GTextOverflowModeWordWrap,
                          GTextAlignmentCenter, NULL);
-
-      graphics_draw_text(ctx, winds[page_nb - 1 + index], statusfontsmall, rect_wind1, GTextOverflowModeWordWrap,
-                         GTextAlignmentCenter, NULL);
-
-      graphics_draw_text(ctx, winds[page_nb + index], statusfontsmall, rect_wind2, GTextOverflowModeWordWrap,
-                         GTextAlignmentCenter, NULL);
-      graphics_draw_text(ctx, winds[page_nb + 1 + index], statusfontsmall, rect_wind3, GTextOverflowModeWordWrap,
+      graphics_draw_text(ctx, winds[page_nb + 1 + index], statusfontsmall,
+                         rect_wind3, GTextOverflowModeWordWrap,
                          GTextAlignmentCenter, NULL);
 
       int ic1 = build_icon(icons[page_nb - 2 + index]);
@@ -933,8 +951,7 @@ static void layer_update(Layer *me, GContext *ctx)
       gbitmap_destroy(s_icon);
     }
 
-    else if (page_nb == 2)
-    {
+    else if (page_nb == 2) {
 // Daily page 1
 #if defined(PBL_ROUND)
 
@@ -988,50 +1005,69 @@ static void layer_update(Layer *me, GContext *ctx)
 
       // Remplissage du bocal de pluie
       graphics_context_set_fill_color(ctx, GColorVividCerulean);
-      graphics_fill_rect(ctx, GRect(82 + offsetb1x, 52 - dayr[1] + offsetb1y, 5, dayr[1]), 0, GCornerNone);
+      graphics_fill_rect(
+          ctx, GRect(82 + offsetb1x, 52 - dayr[1] + offsetb1y, 5, dayr[1]), 0,
+          GCornerNone);
 
       graphics_context_set_fill_color(ctx, GColorVividCerulean);
-      graphics_fill_rect(ctx, GRect(82 + offsetb2x, 102 - dayr[2] + offsetb2y, 5, dayr[2]), 0, GCornerNone);
+      graphics_fill_rect(
+          ctx, GRect(82 + offsetb2x, 102 - dayr[2] + offsetb2y, 5, dayr[2]), 0,
+          GCornerNone);
 
       // Affichage de la barre de vent
       graphics_context_set_stroke_color(ctx, GColorWhite);
-      if (dayp[1] != 0)
-      {
-        graphics_draw_line(ctx, GPoint(71 + offsetb1x, 55 - dayp[1] + offsetb1y), GPoint(78 + offsetb1x, 52 - dayp[1] + offsetb1y));
-        graphics_draw_line(ctx, GPoint(78 + offsetb1x, 52 - dayp[1] + offsetb1y), GPoint(78 + offsetb1x, 52 + offsetb1y));
-        graphics_draw_line(ctx, GPoint(71 + offsetb1x, 55 - dayp[1] + offsetb1y), GPoint(78 + offsetb1x, 58 - dayp[1] + offsetb1y));
+      if (dayp[1] != 0) {
+        graphics_draw_line(ctx,
+                           GPoint(71 + offsetb1x, 55 - dayp[1] + offsetb1y),
+                           GPoint(78 + offsetb1x, 52 - dayp[1] + offsetb1y));
+        graphics_draw_line(ctx,
+                           GPoint(78 + offsetb1x, 52 - dayp[1] + offsetb1y),
+                           GPoint(78 + offsetb1x, 52 + offsetb1y));
+        graphics_draw_line(ctx,
+                           GPoint(71 + offsetb1x, 55 - dayp[1] + offsetb1y),
+                           GPoint(78 + offsetb1x, 58 - dayp[1] + offsetb1y));
       }
-      if (dayp[2] != 0)
-      {
-        graphics_draw_line(ctx, GPoint(71 + offsetb2x, 101 - dayp[2] + offsetb2y), GPoint(78 + offsetb2x, 98 - dayp[2] + offsetb2y));
-        graphics_draw_line(ctx, GPoint(78 + offsetb2x, 98 - dayp[2] + offsetb2y), GPoint(78 + offsetb2x, 98 + offsetb2y));
-        graphics_draw_line(ctx, GPoint(71 + offsetb2x, 101 - dayp[2] + offsetb2y), GPoint(78 + offsetb2x, 104 - dayp[2] + offsetb2y));
+      if (dayp[2] != 0) {
+        graphics_draw_line(ctx,
+                           GPoint(71 + offsetb2x, 101 - dayp[2] + offsetb2y),
+                           GPoint(78 + offsetb2x, 98 - dayp[2] + offsetb2y));
+        graphics_draw_line(ctx,
+                           GPoint(78 + offsetb2x, 98 - dayp[2] + offsetb2y),
+                           GPoint(78 + offsetb2x, 98 + offsetb2y));
+        graphics_draw_line(ctx,
+                           GPoint(71 + offsetb2x, 101 - dayp[2] + offsetb2y),
+                           GPoint(78 + offsetb2x, 104 - dayp[2] + offsetb2y));
       }
 
-      GFont moon_font = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_BOLD_MOON_25));
+      GFont moon_font = fonts_load_custom_font(
+          resource_get_handle(RESOURCE_ID_FONT_BOLD_MOON_25));
       if ((moonPhase[1] >= 0) && (moonPhase[1] < 26))
-        graphics_draw_text(ctx, transPhase[moonPhase[1]], moon_font, rect_moon1_icon, GTextOverflowModeWordWrap,
+        graphics_draw_text(ctx, transPhase[moonPhase[1]], moon_font,
+                           rect_moon1_icon, GTextOverflowModeWordWrap,
                            GTextAlignmentLeft, NULL);
       if ((moonPhase[2] >= 0) && (moonPhase[2] < 26))
-        graphics_draw_text(ctx, transPhase[moonPhase[2]], moon_font, rect_moon2_icon, GTextOverflowModeWordWrap,
+        graphics_draw_text(ctx, transPhase[moonPhase[2]], moon_font,
+                           rect_moon2_icon, GTextOverflowModeWordWrap,
                            GTextAlignmentLeft, NULL);
 
-      graphics_draw_text(ctx, day2_temp, fonts_get_system_font(FONT_KEY_GOTHIC_24_BOLD), rect_day1_temp, GTextOverflowModeWordWrap,
-                         GTextAlignmentLeft, NULL);
-      graphics_draw_text(ctx, day3_temp, fonts_get_system_font(FONT_KEY_GOTHIC_24_BOLD), rect_day2_temp, GTextOverflowModeWordWrap,
-                         GTextAlignmentLeft, NULL);
+      graphics_draw_text(
+          ctx, day2_temp, fonts_get_system_font(FONT_KEY_GOTHIC_24_BOLD),
+          rect_day1_temp, GTextOverflowModeWordWrap, GTextAlignmentLeft, NULL);
+      graphics_draw_text(
+          ctx, day3_temp, fonts_get_system_font(FONT_KEY_GOTHIC_24_BOLD),
+          rect_day2_temp, GTextOverflowModeWordWrap, GTextAlignmentLeft, NULL);
 
-      if ((day2 >= 0) && (day2 < 7))
-      {
+      if ((day2 >= 0) && (day2 < 7)) {
         createdatetext(day2);
-        graphics_draw_text(ctx, day_buffer, fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD), rect_day1, GTextOverflowModeWordWrap,
-                           GTextAlignmentCenter, NULL);
+        graphics_draw_text(
+            ctx, day_buffer, fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD),
+            rect_day1, GTextOverflowModeWordWrap, GTextAlignmentCenter, NULL);
       }
-      if ((day3 >= 0) && (day3 < 7))
-      {
+      if ((day3 >= 0) && (day3 < 7)) {
         createdatetext(day3);
-        graphics_draw_text(ctx, day_buffer, fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD), rect_day2, GTextOverflowModeWordWrap,
-                           GTextAlignmentCenter, NULL);
+        graphics_draw_text(
+            ctx, day_buffer, fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD),
+            rect_day2, GTextOverflowModeWordWrap, GTextAlignmentCenter, NULL);
       }
 
       graphics_context_set_compositing_mode(ctx, GCompOpSet);
@@ -1045,8 +1081,7 @@ static void layer_update(Layer *me, GContext *ctx)
       gbitmap_destroy(s_icon);
     }
 
-    else if (page_nb == 3)
-    {
+    else if (page_nb == 3) {
       // Daily page 2
 #if defined(PBL_ROUND)
       GRect rect_day1 = {{0, -5}, {WIDTH, 36}};
@@ -1096,51 +1131,70 @@ static void layer_update(Layer *me, GContext *ctx)
       // Remplissage du bocal de pluie
 
       graphics_context_set_fill_color(ctx, GColorVividCerulean);
-      graphics_fill_rect(ctx, GRect(82 + offsetb1x, 52 - dayr[3] + offsetb1y, 5, dayr[3]), 0, GCornerNone);
+      graphics_fill_rect(
+          ctx, GRect(82 + offsetb1x, 52 - dayr[3] + offsetb1y, 5, dayr[3]), 0,
+          GCornerNone);
 
       graphics_context_set_fill_color(ctx, GColorVividCerulean);
-      graphics_fill_rect(ctx, GRect(82 + offsetb2x, 102 - dayr[4] + offsetb2y, 5, dayr[4]), 0, GCornerNone);
+      graphics_fill_rect(
+          ctx, GRect(82 + offsetb2x, 102 - dayr[4] + offsetb2y, 5, dayr[4]), 0,
+          GCornerNone);
 
       // Affichage de la barre de vent
       graphics_context_set_stroke_color(ctx, GColorWhite);
       if (dayp[3] != 0)
-        if (dayp[1] != 0)
-        {
-          graphics_draw_line(ctx, GPoint(71 + offsetb1x, 55 - dayp[3] + offsetb1y), GPoint(78 + offsetb1x, 52 - dayp[3] + offsetb1y));
-          graphics_draw_line(ctx, GPoint(78 + offsetb1x, 52 - dayp[3] + offsetb1y), GPoint(78 + offsetb1x, 52 + offsetb1y));
-          graphics_draw_line(ctx, GPoint(71 + offsetb1x, 55 - dayp[3] + offsetb1y), GPoint(78 + offsetb1x, 58 - dayp[3] + offsetb1y));
+        if (dayp[1] != 0) {
+          graphics_draw_line(ctx,
+                             GPoint(71 + offsetb1x, 55 - dayp[3] + offsetb1y),
+                             GPoint(78 + offsetb1x, 52 - dayp[3] + offsetb1y));
+          graphics_draw_line(ctx,
+                             GPoint(78 + offsetb1x, 52 - dayp[3] + offsetb1y),
+                             GPoint(78 + offsetb1x, 52 + offsetb1y));
+          graphics_draw_line(ctx,
+                             GPoint(71 + offsetb1x, 55 - dayp[3] + offsetb1y),
+                             GPoint(78 + offsetb1x, 58 - dayp[3] + offsetb1y));
         }
-      if (dayp[2] != 0)
-      {
-        graphics_draw_line(ctx, GPoint(71 + offsetb2x, 101 - dayp[4] + offsetb2y), GPoint(78 + offsetb2x, 98 - dayp[4] + offsetb2y));
-        graphics_draw_line(ctx, GPoint(78 + offsetb2x, 98 - dayp[4] + offsetb2y), GPoint(78 + offsetb2x, 98 + offsetb2y));
-        graphics_draw_line(ctx, GPoint(71 + offsetb2x, 101 - dayp[4] + offsetb2y), GPoint(78 + offsetb2x, 104 - dayp[4] + offsetb2y));
+      if (dayp[2] != 0) {
+        graphics_draw_line(ctx,
+                           GPoint(71 + offsetb2x, 101 - dayp[4] + offsetb2y),
+                           GPoint(78 + offsetb2x, 98 - dayp[4] + offsetb2y));
+        graphics_draw_line(ctx,
+                           GPoint(78 + offsetb2x, 98 - dayp[4] + offsetb2y),
+                           GPoint(78 + offsetb2x, 98 + offsetb2y));
+        graphics_draw_line(ctx,
+                           GPoint(71 + offsetb2x, 101 - dayp[4] + offsetb2y),
+                           GPoint(78 + offsetb2x, 104 - dayp[4] + offsetb2y));
       }
 
-      GFont moon_font = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_BOLD_MOON_25));
+      GFont moon_font = fonts_load_custom_font(
+          resource_get_handle(RESOURCE_ID_FONT_BOLD_MOON_25));
       if ((moonPhase[3] >= 0) && (moonPhase[3] < 26))
-        graphics_draw_text(ctx, transPhase[moonPhase[3]], moon_font, rect_moon1_icon, GTextOverflowModeWordWrap,
+        graphics_draw_text(ctx, transPhase[moonPhase[3]], moon_font,
+                           rect_moon1_icon, GTextOverflowModeWordWrap,
                            GTextAlignmentLeft, NULL);
       if ((moonPhase[4] >= 0) && (moonPhase[4] < 26))
-        graphics_draw_text(ctx, transPhase[moonPhase[4]], moon_font, rect_moon2_icon, GTextOverflowModeWordWrap,
+        graphics_draw_text(ctx, transPhase[moonPhase[4]], moon_font,
+                           rect_moon2_icon, GTextOverflowModeWordWrap,
                            GTextAlignmentLeft, NULL);
 
-      graphics_draw_text(ctx, day4_temp, fonts_get_system_font(FONT_KEY_GOTHIC_24_BOLD), rect_day1_temp, GTextOverflowModeWordWrap,
-                         GTextAlignmentLeft, NULL);
-      graphics_draw_text(ctx, day5_temp, fonts_get_system_font(FONT_KEY_GOTHIC_24_BOLD), rect_day2_temp, GTextOverflowModeWordWrap,
-                         GTextAlignmentLeft, NULL);
+      graphics_draw_text(
+          ctx, day4_temp, fonts_get_system_font(FONT_KEY_GOTHIC_24_BOLD),
+          rect_day1_temp, GTextOverflowModeWordWrap, GTextAlignmentLeft, NULL);
+      graphics_draw_text(
+          ctx, day5_temp, fonts_get_system_font(FONT_KEY_GOTHIC_24_BOLD),
+          rect_day2_temp, GTextOverflowModeWordWrap, GTextAlignmentLeft, NULL);
 
-      if ((day4 >= 0) && (day4 < 7))
-      {
+      if ((day4 >= 0) && (day4 < 7)) {
         createdatetext(day4);
-        graphics_draw_text(ctx, day_buffer, fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD), rect_day1, GTextOverflowModeWordWrap,
-                           GTextAlignmentCenter, NULL);
+        graphics_draw_text(
+            ctx, day_buffer, fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD),
+            rect_day1, GTextOverflowModeWordWrap, GTextAlignmentCenter, NULL);
       }
-      if ((day5 >= 0) && (day5 < 7))
-      {
+      if ((day5 >= 0) && (day5 < 7)) {
         createdatetext(day5);
-        graphics_draw_text(ctx, day_buffer, fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD), rect_day2, GTextOverflowModeWordWrap,
-                           GTextAlignmentCenter, NULL);
+        graphics_draw_text(
+            ctx, day_buffer, fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD),
+            rect_day2, GTextOverflowModeWordWrap, GTextAlignmentCenter, NULL);
       }
 
       graphics_context_set_compositing_mode(ctx, GCompOpSet);
@@ -1156,8 +1210,8 @@ static void layer_update(Layer *me, GContext *ctx)
   }
 }
 
-static void inbox_received_callback(DictionaryIterator *iterator, void *context)
-{
+static void inbox_received_callback(DictionaryIterator *iterator,
+                                    void *context) {
 
   Tuple *status_tuple = dict_find(iterator, KEY_STATUS);
   Tuple *location_tuple = dict_find(iterator, KEY_LOCATION);
@@ -1275,39 +1329,28 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
   Tuple *moonPhase6_tuple = dict_find(iterator, KEY_MOONPHASE6);
   Tuple *vibrate_tuple = dict_find(iterator, KEY_VIBRATE);
 
-  if (vibrate_tuple)
-  {
+  if (vibrate_tuple) {
     vibes_double_pulse();
-  }
-  else if (status_tuple)
-  {
+  } else if (status_tuple) {
     char statusTemp[100];
-    snprintf(statusTemp, sizeof(statusTemp), "%s%s", statusTemp, status_tuple->value->cstring);
-    if ((strcmp(statusTemp, "END_TRANSMISSION") == 0))
-    {
+    snprintf(statusTemp, sizeof(statusTemp), "%s%s", statusTemp,
+             status_tuple->value->cstring);
+    if ((strcmp(statusTemp, "END_TRANSMISSION") == 0)) {
       //   APP_LOG(APP_LOG_LEVEL_DEBUG, "status received %s",statusTemp);
       psleep(200);
       is_weather_aquired = true;
-    }
-    else
-    {
+    } else {
       strcat(statusFull, statusTemp);
       // APP_LOG(APP_LOG_LEVEL_DEBUG, "statusTemp %s", statusTemp);
     }
     layer_mark_dirty(layer);
-  }
-  else if (location_tuple)
-  {
+  } else if (location_tuple) {
     snprintf(location, sizeof(location), "%s", location_tuple->value->cstring);
 
-    if (strcmp(first_location, "") == 0)
-    {
+    if (strcmp(first_location, "") == 0) {
       snprintf(first_location, sizeof(first_location), "%s", location);
-    }
-    else
-    {
-      if (strcmp(first_location, location) == 0)
-      {
+    } else {
+      if (strcmp(first_location, location) == 0) {
         is_cache_mode = 1;
       }
     }
@@ -1317,14 +1360,26 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
     //  psleep(2000);
   }
 
-  else if (temp_tuple && graph_tuple && tmin_tuple && tmax_tuple && h1_tuple && h2_tuple && h3_tuple && wind1_tuple && wind2_tuple && wind3_tuple && temp1_tuple && temp1_tuple && temp2_tuple && temp3_tuple && temp4_tuple && temp5_tuple && icon1_tuple && icon2_tuple && icon3_tuple && rain1_tuple && rain2_tuple && rain3_tuple && rain4_tuple && temp6_tuple && temp7_tuple && temp8_tuple && temp9_tuple && h4_tuple && h5_tuple && h6_tuple && h7_tuple && rain5_tuple && rain6_tuple && rain7_tuple && rain8_tuple && icon4_tuple && icon5_tuple && icon6_tuple && icon7_tuple && wind4_tuple && wind5_tuple && wind6_tuple && wind7_tuple && day1_tuple && day2_tuple && day3_tuple && day1_icon_tuple && day2_icon_tuple && day3_icon_tuple && KEY_DAY1R && KEY_DAY2R && KEY_DAY3R && KEY_DAY4R && KEY_DAY5R && KEY_DAY6R)
-  {
+  else if (temp_tuple && graph_tuple && tmin_tuple && tmax_tuple && h1_tuple &&
+           h2_tuple && h3_tuple && wind1_tuple && wind2_tuple && wind3_tuple &&
+           temp1_tuple && temp1_tuple && temp2_tuple && temp3_tuple &&
+           temp4_tuple && temp5_tuple && icon1_tuple && icon2_tuple &&
+           icon3_tuple && rain1_tuple && rain2_tuple && rain3_tuple &&
+           rain4_tuple && temp6_tuple && temp7_tuple && temp8_tuple &&
+           temp9_tuple && h4_tuple && h5_tuple && h6_tuple && h7_tuple &&
+           rain5_tuple && rain6_tuple && rain7_tuple && rain8_tuple &&
+           icon4_tuple && icon5_tuple && icon6_tuple && icon7_tuple &&
+           wind4_tuple && wind5_tuple && wind6_tuple && wind7_tuple &&
+           day1_tuple && day2_tuple && day3_tuple && day1_icon_tuple &&
+           day2_icon_tuple && day3_icon_tuple && KEY_DAY1R && KEY_DAY2R &&
+           KEY_DAY3R && KEY_DAY4R && KEY_DAY5R && KEY_DAY6R) {
     page_nb = 1;
     // If all data is available, use it
     graph = graph_tuple->value->int32;
     // APP_LOG(APP_LOG_LEVEL_DEBUG,"c++ graph %d", graph);
 
-    snprintf(weather_temp, sizeof(weather_temp), "%s", temp_tuple->value->cstring);
+    snprintf(weather_temp, sizeof(weather_temp), "%s",
+             temp_tuple->value->cstring);
 
     snprintf(tmin, sizeof(tmin), "%s", tmin_tuple->value->cstring);
 
@@ -1355,12 +1410,18 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
     snprintf(icons[5], sizeof(icons[5]), "%s", icon6_tuple->value->cstring);
     snprintf(icons[6], sizeof(icons[6]), "%s", icon7_tuple->value->cstring);
 
-    snprintf(day1_icon, sizeof(day1_icon), "%s", day1_icon_tuple->value->cstring);
-    snprintf(day2_icon, sizeof(day2_icon), "%s", day2_icon_tuple->value->cstring);
-    snprintf(day3_icon, sizeof(day3_icon), "%s", day3_icon_tuple->value->cstring);
-    snprintf(day4_icon, sizeof(day4_icon), "%s", day4_icon_tuple->value->cstring);
-    snprintf(day5_icon, sizeof(day5_icon), "%s", day5_icon_tuple->value->cstring);
-    snprintf(day6_icon, sizeof(day6_icon), "%s", day6_icon_tuple->value->cstring);
+    snprintf(day1_icon, sizeof(day1_icon), "%s",
+             day1_icon_tuple->value->cstring);
+    snprintf(day2_icon, sizeof(day2_icon), "%s",
+             day2_icon_tuple->value->cstring);
+    snprintf(day3_icon, sizeof(day3_icon), "%s",
+             day3_icon_tuple->value->cstring);
+    snprintf(day4_icon, sizeof(day4_icon), "%s",
+             day4_icon_tuple->value->cstring);
+    snprintf(day5_icon, sizeof(day5_icon), "%s",
+             day5_icon_tuple->value->cstring);
+    snprintf(day6_icon, sizeof(day6_icon), "%s",
+             day6_icon_tuple->value->cstring);
 
     day1 = (int)day1_tuple->value->int32;
     day2 = (int)day2_tuple->value->int32;
@@ -1369,12 +1430,18 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
     day5 = (int)day5_tuple->value->int32;
     day6 = (int)day6_tuple->value->int32;
 
-    snprintf(day1_temp, sizeof(day1_temp), "%s", day1_temp_tuple->value->cstring);
-    snprintf(day2_temp, sizeof(day2_temp), "%s", day2_temp_tuple->value->cstring);
-    snprintf(day3_temp, sizeof(day3_temp), "%s", day3_temp_tuple->value->cstring);
-    snprintf(day4_temp, sizeof(day4_temp), "%s", day4_temp_tuple->value->cstring);
-    snprintf(day5_temp, sizeof(day5_temp), "%s", day5_temp_tuple->value->cstring);
-    snprintf(day6_temp, sizeof(day6_temp), "%s", day6_temp_tuple->value->cstring);
+    snprintf(day1_temp, sizeof(day1_temp), "%s",
+             day1_temp_tuple->value->cstring);
+    snprintf(day2_temp, sizeof(day2_temp), "%s",
+             day2_temp_tuple->value->cstring);
+    snprintf(day3_temp, sizeof(day3_temp), "%s",
+             day3_temp_tuple->value->cstring);
+    snprintf(day4_temp, sizeof(day4_temp), "%s",
+             day4_temp_tuple->value->cstring);
+    snprintf(day5_temp, sizeof(day5_temp), "%s",
+             day5_temp_tuple->value->cstring);
+    snprintf(day6_temp, sizeof(day6_temp), "%s",
+             day6_temp_tuple->value->cstring);
 
     rains[0] = (int)rain1_tuple->value->int32;
     rains[1] = (int)rain11_tuple->value->int32;
@@ -1446,7 +1513,8 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
     dayp[4] = (int)day5p_tuple->value->int32;
     dayp[5] = (int)day6p_tuple->value->int32;
 
-    snprintf(wind_speed_val, sizeof(wind_speed_val), "%s", wind_speed_tuple->value->cstring);
+    snprintf(wind_speed_val, sizeof(wind_speed_val), "%s",
+             wind_speed_tuple->value->cstring);
 
     time_t t = time(NULL);
     struct tm now = *(localtime(&t));
@@ -1477,42 +1545,34 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
     persist_write_string(KEY_SUNRISE, sunrise);
     persist_write_string(KEY_SUNSET, sunset);
 
-    if (is_cache_mode == 0)
-    {
+    if (is_cache_mode == 0) {
       vibes_double_pulse();
     }
   }
 }
 
-static void outbox_failed_callback(DictionaryIterator *iterator, AppMessageResult reason, void *context)
-{
+static void outbox_failed_callback(DictionaryIterator *iterator,
+                                   AppMessageResult reason, void *context) {
   //   APP_LOG(APP_LOG_LEVEL_ERROR, "Outbox send failed!");
 }
 
-static void outbox_sent_callback(DictionaryIterator *iterator, void *context)
-{
+static void outbox_sent_callback(DictionaryIterator *iterator, void *context) {
   //   APP_LOG(APP_LOG_LEVEL_INFO, "Outbox send success!");
 }
 
-static void up_click_handler(ClickRecognizerRef recognizer, void *context)
-{
+static void up_click_handler(ClickRecognizerRef recognizer, void *context) {
 
-  if (is_weather_aquired)
-  {
-    if (page_nb > 1)
-    {
+  if (is_weather_aquired) {
+    if (page_nb > 1) {
       page_nb--;
-    }
-    else
-    {
+    } else {
       page_nb = 5;
     }
     layer_mark_dirty(layer);
   }
 }
 
-static void select_click_handler(ClickRecognizerRef recognizer, void *context)
-{
+static void select_click_handler(ClickRecognizerRef recognizer, void *context) {
   // APP_LOG(APP_LOG_LEVEL_INFO, "Hello  %s", "trest");
 
   /*
@@ -1539,12 +1599,10 @@ static void select_click_handler(ClickRecognizerRef recognizer, void *context)
   // layer_mark_dirty(layer);
 }
 
-static void handle_tick(struct tm *cur, TimeUnits units_changed)
-{
+static void handle_tick(struct tm *cur, TimeUnits units_changed) {
   scdCounter++;
 
-  if (scdCounter == 2)
-  {
+  if (scdCounter == 2) {
 
     app_message_open(2000, 50);
     DictionaryIterator *iter;
@@ -1554,25 +1612,19 @@ static void handle_tick(struct tm *cur, TimeUnits units_changed)
   }
 }
 
-static void down_click_handler(ClickRecognizerRef recognizer, void *context)
-{
+static void down_click_handler(ClickRecognizerRef recognizer, void *context) {
 
-  if (is_weather_aquired)
-  {
-    if (page_nb < 5)
-    {
+  if (is_weather_aquired) {
+    if (page_nb < 5) {
       page_nb++;
-    }
-    else
-    {
+    } else {
       page_nb = 1;
     }
     layer_mark_dirty(layer);
   }
 }
 
-static void click_config_provider(void *context)
-{
+static void click_config_provider(void *context) {
   // Register the ClickHandlers
   window_single_click_subscribe(BUTTON_ID_UP, up_click_handler);
   window_single_click_subscribe(BUTTON_ID_SELECT, select_click_handler);
@@ -1587,8 +1639,7 @@ static void handle_tap(AccelAxisType axis, int32_t direction) {
 }
 */
 
-static void init()
-{
+static void init() {
 
   statusfontsmall = fonts_get_system_font(FONT_KEY_GOTHIC_14);
   statusfontsmallbold = fonts_get_system_font(FONT_KEY_GOTHIC_14_BOLD);
@@ -1617,13 +1668,13 @@ static void init()
 
   /*
  1 + (n * 7) + D1 + ... + Dn
- Where n is the number of Tuples in the Dictionary and Dx are the sizes of the values in the Tuples.
- The size of the Dictionary header is 1 byte. The size of the header for each Tuple is 7 bytes.
+ Where n is the number of Tuples in the Dictionary and Dx are the sizes of the
+ values in the Tuples. The size of the Dictionary header is 1 byte. The size of
+ the header for each Tuple is 7 bytes.
  */
 }
 
-static void deinit()
-{
+static void deinit() {
 
   accel_tap_service_unsubscribe();
   app_message_deregister_callbacks();
@@ -1631,8 +1682,7 @@ static void deinit()
   window_destroy(window);
 }
 
-int main(void)
-{
+int main(void) {
   init();
   app_event_loop();
   deinit();

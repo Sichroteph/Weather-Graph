@@ -1459,9 +1459,9 @@ Pebble.addEventListener('webviewclosed', function (e) {
   var vibrateMessage = {
     134: 1
   };
-  Pebble.sendAppMessage(vibrateMessage, function() {
+  Pebble.sendAppMessage(vibrateMessage, function () {
     console.log('Vibration message sent');
-  }, function() {
+  }, function () {
     console.log('Failed to send vibration message');
   });
 
