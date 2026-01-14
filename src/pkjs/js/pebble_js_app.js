@@ -374,13 +374,13 @@ function getForecastMetNo() {
               if (bIsImperial == 1) {
                 units_description = "imperial";
                 units_temperature = "°F"
-                units_wind = " m/h";
+                units_wind = " mph";
 
               }
               else {
                 units_description = "metric";
                 units_temperature = "°C"
-                units_wind = " m/s";
+                units_wind = " kmh";
               }
 
               var hourly_time = {
@@ -480,10 +480,10 @@ function getForecastMetNo() {
               var stringSunset = padStart2(hours, 2, '0') + ':' + padStart2(minutes, 2, '0');
               //console.log(stringSunrise);
 
-              var rWind = Math.round(jsonWeather.properties.timeseries[0].data.instant.details.wind_speed);
+              var rWind = Math.round(jsonWeather.properties.timeseries[0].data.instant.details.wind_speed * 3.6); // m/s to km/h
               if (bIsImperial == 1) {
-                // mph convertion
-                rWind = convertMpsToMph(rWind);
+                // mph conversion from m/s
+                rWind = convertMpsToMph(jsonWeather.properties.timeseries[0].data.instant.details.wind_speed);
               }
               var stringWindNow = rWind + units_wind;
               var sHumidity = Math.round(jsonWeather.properties.timeseries[0].data.instant.details.relative_humidity) + '%';
@@ -503,11 +503,12 @@ function getForecastMetNo() {
                   var localHour = localTime.getHours();
                   hourly_time['hour' + i] = localHour;
 
-                  // wind 
-                  var windSpeed = Math.round(jsonWeather.properties.timeseries[i].data.instant.details.wind_speed);
+                  // wind - convert m/s to km/h
+                  var windSpeedMps = jsonWeather.properties.timeseries[i].data.instant.details.wind_speed;
+                  var windSpeed = Math.round(windSpeedMps * 3.6); // m/s to km/h
                   if (bIsImperial == 1) {
-                    // mph convertion
-                    windSpeed = convertMpsToMph(windSpeed);
+                    // mph conversion from m/s
+                    windSpeed = convertMpsToMph(windSpeedMps);
                   }
                   hourlyWind['hour' + i] = windSpeed + "\n" + windBearing(jsonWeather.properties.timeseries[i].data.instant.details.wind_from_direction);
 
@@ -963,11 +964,11 @@ function processOpenMeteoResponse(responseWeather, responseSunrise, responseMoon
   if (bIsImperial == 1) {
     units_description = "imperial";
     units_temperature = "°F";
-    units_wind = " m/h";
+    units_wind = " mph";
   } else {
     units_description = "metric";
     units_temperature = "°C";
-    units_wind = " m/s";
+    units_wind = " kmh";
   }
 
   // ----------------------
@@ -990,17 +991,22 @@ function processOpenMeteoResponse(responseWeather, responseSunrise, responseMoon
   minutes = dDateSunset.getMinutes();
   var stringSunset = padStart2(hours, 2, '0') + ':' + padStart2(minutes, 2, '0');
 
-  // Wind speed from Open-Meteo is in km/h
+  // Wind speed from Open-Meteo is already in km/h
   var rWind = Math.round(hourly.wind_speed_10m[0]);
   if (bIsImperial == 1) {
     // Convert km/h to mph
-    rWind = Math.round(hourly.wind_speed_10m[0] * 0.621371);
+    rWind = Math.round(rWind * 0.621371);
   }
   var stringWindNow = rWind + units_wind;
   var sHumidity = Math.round(hourly.relative_humidity_2m[0]) + '%';
 
   // ----------------------
   // Hourly graph
+  // Calculate offset to start from current hour (API returns data from midnight)
+  var now = new Date();
+  var currentHour = now.getHours();
+  var hourOffset = currentHour; // Start from current hour in API data
+
   var hourly_time = {
     hour0: 0, hour3: 0, hour6: 0, hour9: 0, hour12: 0, hour15: 0, hour18: 0, hour21: 0, hour24: 0
   };
@@ -1026,26 +1032,26 @@ function processOpenMeteoResponse(responseWeather, responseSunrise, responseMoon
   var nTodayTempMin = 1000;
   var nTodayTempMax = -1000;
 
-  for (var i = 0; i <= 24 && i < hourly.time.length; i++) {
+  // Extract hourly data starting from current hour
+  for (var i = 0; i <= 24; i++) {
+    var apiIndex = hourOffset + i; // Index in API data (current hour + offset)
+    if (apiIndex >= hourly.time.length) break;
+
     if ((i % 3) === 0) {
-      // 3 hours resolution
-      var utcTimeString = hourly.time[i];
-      var utcDate = new Date(utcTimeString);
-      var offsetMinutes2 = new Date().getTimezoneOffset();
-      var localTime = new Date(utcDate.getTime() - (offsetMinutes2 * 60000));
-      var localHour = localTime.getHours();
+      // Calculate local hour from current time
+      var localHour = (currentHour + i) % 24;
       hourly_time['hour' + i] = localHour;
 
-      // Wind (km/h)
-      var windSpeedKmh = hourly.wind_speed_10m[i];
+      // Wind - already in km/h from API
+      var windSpeedKmh = hourly.wind_speed_10m[apiIndex];
       var windSpeed = Math.round(windSpeedKmh);
       if (bIsImperial == 1) {
         windSpeed = Math.round(windSpeedKmh * 0.621371); // km/h to mph
       }
-      hourlyWind['hour' + i] = windSpeed + "\n" + windBearing(hourly.wind_direction_10m[i]);
+      hourlyWind['hour' + i] = windSpeed + "\n" + windBearing(hourly.wind_direction_10m[apiIndex]);
 
       // Temperatures
-      var temperature = Math.round(hourly.temperature_2m[i]);
+      var temperature = Math.round(hourly.temperature_2m[apiIndex]);
       if (bIsImperial == 1) {
         temperature = celsiusToFahrenheit(temperature);
       }
@@ -1053,13 +1059,13 @@ function processOpenMeteoResponse(responseWeather, responseSunrise, responseMoon
 
       // Icons - convert WMO code to MET Norway symbol
       var hourIsNight = isNightTime(localHour);
-      hourly_icons['hour' + i] = wmoCodeToSymbolCode(hourly.weather_code[i], hourIsNight);
+      hourly_icons['hour' + i] = wmoCodeToSymbolCode(hourly.weather_code[apiIndex], hourIsNight);
     }
 
     // 1 hour resolution - Rain precipitation
-    hourlyRain['hour' + i] = Math.round((hourly.precipitation[i] || 0) * 20);
+    hourlyRain['hour' + i] = Math.round((hourly.precipitation[apiIndex] || 0) * 20);
 
-    var temp = Math.round(hourly.temperature_2m[i]);
+    var temp = Math.round(hourly.temperature_2m[apiIndex]);
     if (temp < nTodayTempMin) {
       nTodayTempMin = temp;
     }
@@ -1098,7 +1104,7 @@ function processOpenMeteoResponse(responseWeather, responseSunrise, responseMoon
     // Icon - convert WMO code (daytime)
     daily_icon['day' + d] = wmoCodeToSymbolCode(daily.weather_code[d], false);
 
-    // Wind (km/h)
+    // Wind - already in km/h from API
     var dayWind = Math.round(daily.wind_speed_10m_max[d]);
     if (bIsImperial == 1) {
       dayWind = Math.round(daily.wind_speed_10m_max[d] * 0.621371); // km/h to mph
@@ -1123,6 +1129,21 @@ function processOpenMeteoResponse(responseWeather, responseSunrise, responseMoon
     daily_moon_phases['day' + m] = Math.round(initialMoon / 365 * 25);
   }
 
+  // Calculate hours from current time (simpler and more reliable than API extraction)
+  var now = new Date();
+  var currentHour = now.getHours();
+  var computed_hours = {
+    hour0: currentHour,
+    hour3: (currentHour + 3) % 24,
+    hour6: (currentHour + 6) % 24,
+    hour9: (currentHour + 9) % 24,
+    hour12: (currentHour + 12) % 24,
+    hour15: (currentHour + 15) % 24,
+    hour18: (currentHour + 18) % 24,
+    hour21: (currentHour + 21) % 24,
+    hour24: currentHour  // 24h later = same hour
+  };
+
   var dictionary = {
     0: stringTemperatureNow,
     1: 0,
@@ -1142,15 +1163,15 @@ function processOpenMeteoResponse(responseWeather, responseSunrise, responseMoon
     56: hourlyTemperatures['hour18'],
     72: hourlyTemperatures['hour21'],
     73: hourlyTemperatures['hour24'],
-    111: hourly_time['hour0'],
-    16: hourly_time['hour3'],
-    17: hourly_time['hour6'],
-    18: hourly_time['hour9'],
-    57: hourly_time['hour12'],
-    58: hourly_time['hour15'],
-    59: hourly_time['hour18'],
-    60: hourly_time['hour21'],
-    112: hourly_time['hour24'],
+    111: computed_hours['hour0'],
+    16: computed_hours['hour3'],
+    17: computed_hours['hour6'],
+    18: computed_hours['hour9'],
+    57: computed_hours['hour12'],
+    58: computed_hours['hour15'],
+    59: computed_hours['hour18'],
+    60: computed_hours['hour21'],
+    112: computed_hours['hour24'],
 
     21: hourlyRain['hour0'],
     80: hourlyRain['hour1'],

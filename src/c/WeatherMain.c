@@ -17,7 +17,7 @@
 #define HEIGHT 168
 #endif
 #define RULER_SIZE -2
-#define MAXRAIN 40;
+#define MAXRAIN 40
 
 #define LINE_THICK 3
 
