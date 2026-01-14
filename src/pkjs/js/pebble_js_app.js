@@ -990,11 +990,11 @@ function processOpenMeteoResponse(responseWeather, responseSunrise, responseMoon
   minutes = dDateSunset.getMinutes();
   var stringSunset = padStart2(hours, 2, '0') + ':' + padStart2(minutes, 2, '0');
 
-  // Wind speed from Open-Meteo is in km/h, convert to m/s first for consistency
-  var rWind = Math.round(hourly.wind_speed_10m[0] / 3.6); // km/h to m/s
+  // Wind speed from Open-Meteo is in km/h
+  var rWind = Math.round(hourly.wind_speed_10m[0]);
   if (bIsImperial == 1) {
-    // mph conversion
-    rWind = convertMpsToMph(rWind);
+    // Convert km/h to mph
+    rWind = Math.round(hourly.wind_speed_10m[0] * 0.621371);
   }
   var stringWindNow = rWind + units_wind;
   var sHumidity = Math.round(hourly.relative_humidity_2m[0]) + '%';
@@ -1036,11 +1036,11 @@ function processOpenMeteoResponse(responseWeather, responseSunrise, responseMoon
       var localHour = localTime.getHours();
       hourly_time['hour' + i] = localHour;
 
-      // Wind
+      // Wind (km/h)
       var windSpeedKmh = hourly.wind_speed_10m[i];
-      var windSpeed = Math.round(windSpeedKmh / 3.6); // km/h to m/s
+      var windSpeed = Math.round(windSpeedKmh);
       if (bIsImperial == 1) {
-        windSpeed = convertMpsToMph(windSpeed);
+        windSpeed = Math.round(windSpeedKmh * 0.621371); // km/h to mph
       }
       hourlyWind['hour' + i] = windSpeed + "\n" + windBearing(hourly.wind_direction_10m[i]);
 
@@ -1098,10 +1098,10 @@ function processOpenMeteoResponse(responseWeather, responseSunrise, responseMoon
     // Icon - convert WMO code (daytime)
     daily_icon['day' + d] = wmoCodeToSymbolCode(daily.weather_code[d], false);
 
-    // Wind (km/h to m/s)
-    var dayWind = Math.round(daily.wind_speed_10m_max[d] / 3.6);
+    // Wind (km/h)
+    var dayWind = Math.round(daily.wind_speed_10m_max[d]);
     if (bIsImperial == 1) {
-      dayWind = convertMpsToMph(dayWind);
+      dayWind = Math.round(daily.wind_speed_10m_max[d] * 0.621371); // km/h to mph
     }
     daily_wind['day' + d] = dayWind;
 
